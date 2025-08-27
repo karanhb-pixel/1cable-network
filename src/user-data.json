@@ -1,0 +1,92 @@
+[
+  {
+  "username": "john_doe",
+  "password": "test",
+    "email": "john.doe@example.com",
+    "wifi_plan": "100 Mbps",
+    "ott_plan": "12 Months",
+    "start_date": "2025-01-10",
+    "end_date": "2026-01-09"
+  },
+  {
+  "username": "jane_smith",
+  "password": "test",
+    "email": "jane.smith@example.com",
+    "wifi_plan": "80 Mbps",
+    "ott_plan": "6 Months",
+    "start_date": "2025-03-15",
+    "end_date": "2025-09-14"
+  },
+  {
+  "username": "alex_lee",
+  "password": "test",
+    "email": "alex.lee@example.com",
+    "wifi_plan": "60 Mbps",
+    "ott_plan": null,
+    "start_date": "2025-05-01",
+    "end_date": "2025-10-31"
+  },
+  {
+  "username": "maria_garcia",
+  "password": "test",
+    "email": "maria.garcia@example.com",
+    "wifi_plan": null,
+    "ott_plan": "3 Months",
+    "start_date": "2025-07-20",
+    "end_date": "2025-10-19"
+  },
+  {
+  "username": "li_wang",
+  "password": "test",
+    "email": "li.wang@example.com",
+    "wifi_plan": "50 Mbps",
+    "ott_plan": null,
+    "start_date": "2025-02-11",
+    "end_date": "2025-08-10"
+  },
+  {
+  "username": "emma_jones",
+  "password": "test",
+    "email": "emma.jones@example.com",
+    "wifi_plan": null,
+    "ott_plan": null,
+    "start_date": null,
+    "end_date": null
+  },
+  {
+  "username": "oliver_brown",
+  "password": "test",
+    "email": "oliver.brown@example.com",
+    "wifi_plan": "80 Mbps",
+    "ott_plan": "12 Months",
+    "start_date": "2025-04-05",
+    "end_date": "2026-04-04"
+  },
+  {
+  "username": "sophia_davis",
+  "password": "test",
+    "email": "sophia.davis@example.com",
+    "wifi_plan": "100 Mbps",
+    "ott_plan": null,
+    "start_date": "2025-06-18",
+    "end_date": "2026-06-17"
+  },
+  {
+  "username": "liam_martin",
+  "password": "test",
+    "email": "liam.martin@example.com",
+    "wifi_plan": null,
+    "ott_plan": "6 Months",
+    "start_date": "2025-08-01",
+    "end_date": "2026-01-31"
+  },
+  {
+  "username": "ava_clark",
+  "password": "test",
+    "email": "ava.clark@example.com",
+    "wifi_plan": "60 Mbps",
+    "ott_plan": "3 Months",
+    "start_date": "2025-09-10",
+    "end_date": "2025-12-09"
+  }
+]
