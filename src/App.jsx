@@ -1,14 +1,14 @@
 
 import {Routes, Route } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import User from './Users/User';
-import Home from './Home';
-import Navbar from './Navbar/navbar';
-import Footer from './footer/Footer';
-import Posts from './Posts/Posts';
-import Single from './Single';
-
+import User from './User/Users/User';
+import Home from './component/Home';
+import Navbar from './component/Navbar/navbar';
+import Footer from './component/footer/Footer';
+import Add_User from './User/Add_User/Add_User';
 import './App.css';
+import { Add_Wifi_plans } from './Wifi_plan/Add_Wifi_plans/Add_Wifi_plans';
+import { Show_Wifi_plans } from './Wifi_plan/Show_Wifi_plans/Show_Wifi_plans';
 
 function App() {
   const [user, setUserState] = useState(null);
@@ -39,8 +39,9 @@ function App() {
       <Routes>
         <Route path="/user" element={<User user={user} setUser={setUser} />} />
         <Route path="/" element={<Home user={user} />} />
-        <Route path="/posts" element={<Posts/>} />
-        <Route path="/posts/:id" element={<Single />} />
+        <Route path="/add_User" element={<Add_User/>}/>
+        <Route path='/add_Wifi_plans' element={<Add_Wifi_plans/>} />
+        <Route path='show_Wifi_plans' element={<Show_Wifi_plans/>} />
       </Routes>
       <Footer />
     </>

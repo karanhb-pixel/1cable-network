@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import './navbar.css';
 
@@ -7,7 +7,7 @@ function Navbar({ user, onLogout }) {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
-  // console.log(user);
+  
   
   const handleDropdown = (open) => {
     if (open) {
@@ -74,7 +74,12 @@ function Navbar({ user, onLogout }) {
                 </ul>
               )}
             </div>
-            <a href="/Posts">Posts</a>
+            {user?.isAdmin && <>
+             <a href="/add_User">Add User</a>
+             {/* <a href="/add_Wifi_plans">Add Wifi_plans</a> */}
+             <a href="/show_Wifi_plans">Show Wifi_plans</a>
+            </>
+             }
             <a href="/#contact">Contact</a>
             <a href="/#renewal">Renewal</a>
             {user ? (

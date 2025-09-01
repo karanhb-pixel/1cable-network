@@ -1,0 +1,83 @@
+/* Add User Form Modern UI Styles */
+.add-user-form {
+	max-width: 480px;
+	margin: 40px auto;
+	padding: 32px 28px 24px 28px;
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.04);
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.add-user-title {
+	text-align: center;
+	font-size: 2rem;
+	font-weight: 700;
+	margin-bottom: 1.5rem;
+	color: #2d3748;
+}
+
+.add-user-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.form-group label {
+	font-size: 1rem;
+	color: #4a5568;
+	font-weight: 500;
+}
+
+.form-input {
+	padding: 0.6rem 0.9rem;
+	border: 1px solid #cbd5e1;
+	border-radius: 6px;
+	font-size: 1rem;
+	background: #f9fafb;
+	transition: border 0.2s;
+}
+.form-input:focus {
+	border: 1.5px solid #3182ce;
+	outline: none;
+	background: #fff;
+}
+
+.form-error {
+	color: #e53e3e;
+	font-size: 0.95rem;
+	margin-top: 2px;
+}
+
+.add-user-btn {
+	margin-top: 1.2rem;
+	padding: 0.7rem 0;
+	background: linear-gradient(90deg, #3182ce 0%, #63b3ed 100%);
+	color: #fff;
+	font-size: 1.1rem;
+	font-weight: 600;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	box-shadow: 0 2px 8px rgba(49,130,206,0.08);
+	transition: background 0.2s, box-shadow 0.2s;
+}
+.add-user-btn:disabled {
+	background: #b6c6d8;
+	cursor: not-allowed;
+}
+
+.add-user-loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 120px;
+}

@@ -2,7 +2,7 @@ import "./user.css";
 import UserAuth from "../UserAuth/UserAuth";
 import { use, useEffect, useState } from "react";
 import axios from "axios";
-import LoadingIcon from "../component/Loading_icon";
+import LoadingIcon from "../../component/Loading_icon";
 
 const User = ({ user, setUser }) => {
   const [allUsers, setAllUsers] = useState([]);
