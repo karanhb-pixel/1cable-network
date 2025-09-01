@@ -7,7 +7,8 @@ function Navbar({ user, onLogout }) {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
-
+  // console.log(user);
+  
   const handleDropdown = (open) => {
     if (open) {
       clearTimeout(dropdownTimeout.current);
@@ -73,13 +74,14 @@ function Navbar({ user, onLogout }) {
                 </ul>
               )}
             </div>
+            <a href="/Posts">Posts</a>
             <a href="/#contact">Contact</a>
             <a href="/#renewal">Renewal</a>
             {user ? (
               <div className="nav-user-info">
                 <Link to="/user" className="nav-user-link">
-                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}`} alt="User" className="nav-user-avatar" />
-                  <span className="nav-user-name">{user.username}</span>
+                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_nicename)}`} alt="User" className="nav-user-avatar" />
+                  <span className="nav-user-name">{user.user_nicename}</span>
                 </Link>
                 <button onClick={onLogout} className="nav-logout-btn">Logout</button>
               </div>

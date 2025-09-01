@@ -1,7 +1,6 @@
 /* Logout Button Styles */
 .logout-btn {
-  padding: 0.75rem 0;
-  width: 60%;
+  padding: 0.75rem 3rem;
   background: linear-gradient(90deg, #f87171, #fbbf24);
   color: #fff;
   font-size: 1.1rem;
@@ -58,7 +57,7 @@
 }
 /* User Login Form Styles */
 .user-page {
-  max-width: 400px;
+  max-width: 800px;
   margin: 3rem auto;
   padding: 2rem 2rem 1.5rem 2rem;
   background: #181c24;
@@ -106,7 +105,7 @@
   background: #1e293b;
 }
 .user-auth-form button {
-  padding: 0.75rem 0;
+  padding: 0.75rem 3rem;
   background: linear-gradient(90deg, #3b82f6, #a855f7);
   color: #fff;
   font-size: 1.1rem;
@@ -116,7 +115,7 @@
   cursor: pointer;
   margin-top: 0.5rem;
   transition: background 0.2s;
-  width: 50%;
+  
 }
 .user-auth-form button:hover {
   background: linear-gradient(90deg, #a855f7, #3b82f6);
@@ -127,3 +126,22 @@
   font-size: 0.95rem;
   text-align: center;
 }
+
+/* Loader Styles */
+.loader-multi {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top-color: #3498db; /* Blue */
+  border-right-color: #e74c3c; /* Red */
+  border-bottom-color: #f1c40f; /* Yellow */
+  border-left-color: #2ecc71; /* Green */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
