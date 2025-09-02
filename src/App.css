@@ -9,6 +9,11 @@
 }
 :root {
     --main-gradient: linear-gradient(to right, #3b82f6, #a855f7);
+    .text-red { color: #ef4444; }
+    .text-blue { color: #d9e8ff; }
+    .text-yellow { color: #facc15; }
+    .text-green { color: #22c55e; }
+
 }
 /* Custom Styles for 1cable Network */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -147,6 +152,17 @@ body {
 .plan-price {
     font-weight: bold;
 }
+.price-option{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.price-option :first-child{
+    font-weight: 800;
+}
 .plans-notes{
    background-color: #242424;
     padding: 1.5rem;
@@ -160,6 +176,15 @@ body {
     font-size: 0.875rem;
     color: #6b7280;
     margin-top: 2rem;
+}
+
+.edit-note {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #4299e1;
 }
 #ott-services .plans-grid{
     grid-template-columns: repeat(3, 1fr);

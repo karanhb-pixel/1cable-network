@@ -1,0 +1,88 @@
+/* Plans Section */
+.plans-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+    color: white;
+}
+.plans-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+.plans-subtitle {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+    text-align: center;
+    color: #9ca3af;
+}
+.plans-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+.plan-card {
+    background-color: #242424;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.2);
+    border: 1px solid #374151;
+    transition: transform 0.3s;
+}
+.plan-card:hover {
+    transform: scale(1.05);
+    background: var(--main-gradient);
+}
+.plan-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.plan-speed {
+    margin-top: 0.5rem;
+    color: #9ca3af;
+}
+.plan-list {
+    margin-top: 1rem;
+    list-style: none;
+    padding: 0;
+}
+.plan-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+}
+.plan-list li:last-child { margin-bottom: 0; }
+.plan-price {
+    font-weight: bold;
+}
+.plans-notes{
+   background-color: #242424;
+   padding: 1.5rem;
+   border-radius: 1rem;
+   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.2);
+   border: 1px solid #1e242c;
+   margin: 1.5rem auto;
+}
+.plans-note {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 2rem;
+}
+@media (min-width: 768px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.edit-note {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #4299e1;
+}
