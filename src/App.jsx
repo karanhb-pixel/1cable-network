@@ -7,8 +7,8 @@ import Navbar from './component/Navbar/navbar';
 import Footer from './component/footer/Footer';
 import Add_User from './User/Add_User/Add_User';
 import './App.css';
-import { Add_Wifi_plans } from './Wifi_plan/Add_Wifi_plans/Add_Wifi_plans';
-import { Show_Wifi_plans } from './Wifi_plan/Show_Wifi_plans/Show_Wifi_plans';
+import { Add_Wifi_plans } from './component/Wifi_plan/Add_Wifi_plans/Add_Wifi_plans';
+import { Show_Wifi_plans } from './component/Wifi_plan/Show_Wifi_plans/Show_Wifi_plans';
 
 function App() {
   const [user, setUserState] = useState(null);
