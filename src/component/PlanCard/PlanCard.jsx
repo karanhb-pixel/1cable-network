@@ -4,26 +4,28 @@
 const PlanCard = ({ plan, onPlanClick, isAdmin }) => {
   return (
     <div
-      className={`plan-card relative ${isAdmin ? "cursor-pointer" : ""}`}
+      className={`plan-card relative ${isAdmin ? 'cursor-pointer' : ''}`}
       onClick={() => isAdmin && onPlanClick(plan)}
     >
-      <h3 className={`plan-title text-${plan.color}`}>{plan.speed} Mbps</h3>
-      <p className="plan-speed">Speed Up To</p>
-      <div className="plan-prices">
+      <h3 className={`plan-title text-${plan.color}`}>{`${plan.speed} Mbps` || `${plan.duration}`}</h3>
+      <p className="plan-speed">{plan.speed ? 'Speed Up To' : 'Price'}</p>
+      <ul className="plan-list">
         {plan.prices.map((priceOption, index) => (
-          <div key={index} className="price-option">
-            <span className="price-duration">{priceOption.duration}</span>
-            {/* Display the formatted price directly */}
-            <span className="price-value">{priceOption.price}</span>
-          </div>
+          <li key={index}>
+            <span>{priceOption.duration}</span>
+            <span className="plan-price">{priceOption.price}</span>
+          </li>
         ))}
-      </div>
+        {plan.bonus && (
+          <li className="plan-bonus">
+            <span className="text-red-500">{plan.bonus}</span>
+          </li>
+        )}
+      </ul>
       {isAdmin && (
-        <>
-          <span className="edit-note text-red">Click to Edit</span>
-          <p className="plans-note">NO OTHER CHARGES</p>
-          <p className="plans-note text-red text-3xl">Free Installations</p>
-        </>
+        <span className="edit-note">
+          Click to Edit
+        </span>
       )}
     </div>
   );
