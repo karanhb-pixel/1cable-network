@@ -94,7 +94,12 @@ export const Show_Wifi_plans_2 = () => {
               onPlanClick={handleAdminPlanClick}
             />
           ))}
-        </div>
+        </div>{!isAdmin && (<>
+        <p className="plans-note">NO OTHER CHARGES</p>
+          <p className="plans-note text-red text-3xl">Free Installations</p>
+          </>)
+          }
+      
       </section>
     </>
   );

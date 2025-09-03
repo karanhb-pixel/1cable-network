@@ -1,11 +1,10 @@
 // import './PlanCard.css';
 
-
 // --- Start of PlanCard Module ---
 const PlanCard = ({ plan, onPlanClick, isAdmin }) => {
   return (
     <div
-      className={`plan-card relative ${isAdmin ? 'cursor-pointer' : ''}`}
+      className={`plan-card relative ${isAdmin ? "cursor-pointer" : ""}`}
       onClick={() => isAdmin && onPlanClick(plan)}
     >
       <h3 className={`plan-title text-${plan.color}`}>{plan.speed} Mbps</h3>
@@ -20,9 +19,11 @@ const PlanCard = ({ plan, onPlanClick, isAdmin }) => {
         ))}
       </div>
       {isAdmin && (
-        <span className="edit-note text-red">
-          Click to Edit
-        </span>
+        <>
+          <span className="edit-note text-red">Click to Edit</span>
+          <p className="plans-note">NO OTHER CHARGES</p>
+          <p className="plans-note text-red text-3xl">Free Installations</p>
+        </>
       )}
     </div>
   );

@@ -6,10 +6,7 @@ function Navbar({ user, onLogout }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
 
-  useEffect(() => {
-    console.log('user in Navbar:', !user?.isAdmin);
-    
-  },[user]);
+  
   
   const handleDropdown = (open) => {
     if (open) {

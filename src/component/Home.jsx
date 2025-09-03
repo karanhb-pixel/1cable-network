@@ -1,6 +1,19 @@
 import "./../App.css";
+import { Ott_plan } from "./Ott_plan/Ott_plan";
+import { Show_Wifi_plans_2 } from "./Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2";
+import React, { useEffect, useState } from "react";
+function Home(user) {
 
-function Home() {
+  const [isAdmin, setIsAdmin] = useState();
+  
+  useEffect(() => {
+    // console.log("user in Home:", user);
+    setIsAdmin(user?.isAdmin || false);
+    // console.log("isAdmin : ",isAdmin);
+    // console.log("user?.isAdmin :", user.isAdmin);
+    
+    
+  }, [user]);
   return (
     <>
       <main>
@@ -22,120 +35,13 @@ function Home() {
                 decoding="async"
               />
           </div>
-          {/* removed hero-img-desktop, image is above */}
         </div>
 
-        {/* <!-- Plans Section --> */}
-        <section id="plans" className="plans-section">
-          <h2 className="plans-title">HIGH SPEED UNLIMITED PLANS</h2>
-          <div className="plans-grid">
-            {/* 50 Mbps Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-red">50 Mbps</h3>
-              <p className="plan-speed">Speed Up To</p>
-              <ul className="plan-list">
-                <li>
-                  <span>6 Month</span>
-                  <span className="plan-price">₹3100/-</span>
-                </li>
-                <li>
-                  <span>12 Month</span>
-                  <span className="plan-price">₹5400/-</span>
-                </li>
-              </ul>
-            </div>
-            {/* 60 Mbps Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-blue">60 Mbps</h3>
-              <p className="plan-speed">Speed Up To</p>
-              <ul className="plan-list">
-                <li>
-                  <span>6 Month</span>
-                  <span className="plan-price">₹3300/-</span>
-                </li>
-                <li>
-                  <span>12 Month</span>
-                  <span className="plan-price">₹5700/-</span>
-                </li>
-              </ul>
-            </div>
-            {/* 80 Mbps Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-yellow">80 Mbps</h3>
-              <p className="plan-speed">Speed Up To</p>
-              <ul className="plan-list">
-                <li>
-                  <span>6 Month</span>
-                  <span className="plan-price">₹3500/-</span>
-                </li>
-                <li>
-                  <span>12 Month</span>
-                  <span className="plan-price">₹6000/-</span>
-                </li>
-              </ul>
-            </div>
-            {/* 100 Mbps Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-green">100 Mbps</h3>
-              <p className="plan-speed">Speed Up To</p>
-              <ul className="plan-list">
-                <li>
-                  <span>6 Month</span>
-                  <span className="plan-price">₹4000/-</span>
-                </li>
-                <li>
-                  <span>12 Month</span>
-                  <span className="plan-price">₹7000/-</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <p className="plans-note">NO OTHER CHARGES</p>
-          <p className="plans-note text-red text-3xl">Free Installations</p>
-        </section>
+        {/* <!-- Wifi Plans Section --> */}
+        <Show_Wifi_plans_2 />
 
-        {/* <!-- OTT Services Section --> */}
-        <section id="ott-services" className="plans-section">
-          <h2 className="plans-title">TV - 300 channels</h2>
-          <p className="plans-subtitle">280 SD channel + 20 HD channel</p>
-          <div className="plans-grid">
-            {/* 3 Months Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-blue">3 Months</h3>
-              <ul className="plan-list">
-                <li>
-                  <span>Price</span>
-                  <span className="plan-price">₹900/-</span>
-                </li>
-              </ul>
-            </div>
-            {/* 6 Months Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-green">6 Months</h3>
-              <ul className="plan-list">
-                <li>
-                  <span>Price</span>
-                  <span className="plan-price">₹1800/-</span>
-                </li>
-              </ul>
-            </div>
-            {/* 12 Months Plan */}
-            <div className="plan-card">
-              <h3 className="plan-title text-yellow">12 Months</h3>
-              <ul className="plan-list">
-                <li>
-                  <span>Price</span>
-                  <span className="plan-price">₹3600/-</span>
-                </li>
-                <li>
-                  <span className="plan-bonus text-red">
-                    1 month extra free
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
+         {/* <!-- OTT Services Section -->  */}
+        <Ott_plan/>
 
         {/* <!-- Additional Services Section --> */}
         <section id="additional-services" className="plans-section">
