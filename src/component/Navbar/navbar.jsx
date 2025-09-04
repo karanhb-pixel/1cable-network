@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useUser } from "../../useUser";
 import "./navbar.css";
 
-function Navbar({ user, onLogout }) {
+function Navbar() {
+  const { user, setUser } = useUser();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
 
@@ -105,7 +107,7 @@ function Navbar({ user, onLogout }) {
                   />
                   <span className="nav-user-name">{user.user_nicename}</span>
                 </Link>
-                <button onClick={onLogout} className="nav-logout-btn">
+                <button onClick={() => setUser(null)} className="nav-logout-btn">
                   Logout
                 </button>
               </div>

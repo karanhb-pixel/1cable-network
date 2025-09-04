@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import PlanCard from '../PlanCard/PlanCard';
 import { OttEditCard } from "../EditCard/OttEditCard";
 import { formatPrice } from '../../utils/currencyFormatter';
-export const Ott_plan = ({user}) => {
+import { useUser } from "../../useUser";
+export const Ott_plan = () => {
   {
     /* <!-- OTT Services Section --> */
   }
+  const { user } = useUser();
   const [plans, setPlans] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

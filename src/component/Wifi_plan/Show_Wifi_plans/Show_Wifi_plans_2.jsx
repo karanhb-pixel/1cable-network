@@ -3,8 +3,12 @@ import React, { useEffect, useState } from 'react'
 import PlanCard from '../../PlanCard/PlanCard';
 import EditForm from '../../EditCard/EditCard';
 import {  formatPrice } from '../../../utils/currencyFormatter';
-export const Show_Wifi_plans_2 = ({user}) => {
-  
+import { useUser } from "../../../useUser";
+
+
+export const Show_Wifi_plans_2 = () => {
+
+  const { user } = useUser();
   const [plans, setPlans] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
   const [isEditing, setIsEditing] = useState(false);

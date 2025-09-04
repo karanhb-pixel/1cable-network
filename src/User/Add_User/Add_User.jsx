@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import './add_User.css';
 import LoadingIcon from "../../component/Loading_icon";
 import axios from "axios";
+import { useUser } from "../../useUser";
 
 const AddUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -23,10 +24,9 @@ const AddUserSchema = Yup.object().shape({
   end_date: Yup.date().nullable(),
 });
 
-const Add_User = ({user}) => {
+const Add_User = () => {
+  const { user } = useUser();
   const navigate = useNavigate();
-  // console.log("user prop in Add_User:", user);
-  // console.log("user token in Add_User:", user ? user.token : 'No user token');
   
   
   return (
