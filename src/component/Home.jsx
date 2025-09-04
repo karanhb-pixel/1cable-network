@@ -1,19 +1,21 @@
 import "./../App.css";
 import { Ott_plan } from "./Ott_plan/Ott_plan";
 import { Show_Wifi_plans_2 } from "./Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2";
-import React, { useEffect, useState } from "react";
-function Home(user) {
+import React from "react";
+import { useUser } from "../UserContext";
+function Home() {
+  const { user } = useUser();
 
-  const [isAdmin, setIsAdmin] = useState();
+  // const [isAdmin, setIsAdmin] = useState();
   
-  useEffect(() => {
-    // console.log("user in Home:", user);
-    setIsAdmin(user?.isAdmin || false);
-    // console.log("isAdmin : ",isAdmin);
-    // console.log("user?.isAdmin :", user.isAdmin);
-    
-    
-  }, [user]);
+  // useEffect(() => {
+  //   // console.log("user in Home :", user);
+  //   const newIsAdmin = user?.isAdmin || false;
+  //   setIsAdmin(newIsAdmin);
+  //   // console.log("isAdmin in Home : ", newIsAdmin);
+  //   // console.log("user?.isAdmin in Home :", user?.isAdmin);
+
+  // }, [user]);
   return (
     <>
       <main>
@@ -38,10 +40,10 @@ function Home(user) {
         </div>
 
         {/* <!-- Wifi Plans Section --> */}
-        <Show_Wifi_plans_2 />
+        <Show_Wifi_plans_2 user={user} />
 
          {/* <!-- OTT Services Section -->  */}
-        <Ott_plan/>
+        <Ott_plan user={user}/>
 
         {/* <!-- Additional Services Section --> */}
         <section id="additional-services" className="plans-section">

@@ -11,6 +11,7 @@
 }
 :root {
     --main-gradient: linear-gradient(to right, #3b82f6, #a855f7);
+    
     .text-red { color: #ef4444; }
     .text-blue { color: #d9e8ff; }
     .text-yellow { color: #facc15; }

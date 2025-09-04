@@ -1,0 +1,33 @@
+[
+      {
+        "duration": "3 Months",
+        "color": "blue",
+        "prices": [
+            {
+                
+                "price": "900/-"
+            }
+        ]
+      },
+      {
+        "duration": "6 Months",
+        "color": "green",
+        "prices": [
+            {
+                
+                "price": "1800/-"
+            }
+        ]
+      },
+      {
+        "duration": "12 Months",
+        "color": "yellow",
+        "prices": [
+            {
+                
+                "price": "3600/-"
+            }
+        ] ,
+        "bonus": "1 month extra free"
+      }
+    ]

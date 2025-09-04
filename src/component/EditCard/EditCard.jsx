@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, useFormik, FieldArray, Form } from 'formik';
+import { Formik, FieldArray, Form } from 'formik';
 import * as Yup from 'yup';
 import './EditCard.css';
 import { useState } from 'react';
@@ -26,16 +26,17 @@ const extractNumericPrice = (priceString) => {
 };
 
 const EditForm = ({ plan, onSave, onCancel }) => {
+console.log(plan, 'plan from edit form');
 
 //static plan for formik initial values
 const staticPlan = {
     ...plan,
-    prices: plan.prices.map((priceItem, index) => ({
+    prices: plan.prices.map((priceItem) => ({
       ...priceItem,
-      duration: index === 0 ? '6 Months' : '12 Months',
       price: extractNumericPrice(priceItem.price),
     })),
   };
+// console.log(staticPlan, 'static plan');
 
   return (
     <Formik
@@ -49,7 +50,7 @@ const staticPlan = {
             price: `₹${priceItem.price}/-`
           }))
         };
-        onSave(values);
+        onSave(formattedValues);
       }}
     >
       {({ isSubmitting, touched, errors, values, handleBlur, handleChange }) => (

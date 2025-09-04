@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./navbar.css";
 
@@ -87,6 +87,8 @@ function Navbar({ user, onLogout }) {
                 <a href="/add_User">Add User</a>
                 
                 <a href="/show_Wifi_plans_2">Show Wifi_plans</a>
+
+                <a href="/ott_plan">Show Ott_plans</a>
               </>
             )}
 

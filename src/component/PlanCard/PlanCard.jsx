@@ -7,12 +7,12 @@ const PlanCard = ({ plan, onPlanClick, isAdmin }) => {
       className={`plan-card relative ${isAdmin ? 'cursor-pointer' : ''}`}
       onClick={() => isAdmin && onPlanClick(plan)}
     >
-      <h3 className={`plan-title text-${plan.color}`}>{`${plan.speed} Mbps` || `${plan.duration}`}</h3>
+      <h3 className={`plan-title text-${plan.color}`}>{plan.speed ? `${plan.speed} Mbps` : `${plan.duration}`}</h3>
       <p className="plan-speed">{plan.speed ? 'Speed Up To' : 'Price'}</p>
       <ul className="plan-list">
         {plan.prices.map((priceOption, index) => (
           <li key={index}>
-            <span>{priceOption.duration}</span>
+            {plan.speed ? (<span className="">{priceOption.duration}</span>):(<span className="">{plan.duration}</span>)}
             <span className="plan-price">{priceOption.price}</span>
           </li>
         ))}

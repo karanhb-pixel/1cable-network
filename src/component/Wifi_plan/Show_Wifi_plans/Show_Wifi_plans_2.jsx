@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PlanCard from '../../PlanCard/PlanCard';
 import EditForm from '../../EditCard/EditCard';
 import {  formatPrice } from '../../../utils/currencyFormatter';
-export const Show_Wifi_plans_2 = () => {
+export const Show_Wifi_plans_2 = ({user}) => {
   
   const [plans, setPlans] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
@@ -27,8 +27,8 @@ export const Show_Wifi_plans_2 = () => {
             price: formatPrice(priceOption.price)
           }))
         }));
-        setPlans(data);
-        setIsAdmin(true);
+        setPlans(formattedData);
+        // setIsAdmin(true);
       } catch (error) {
         console.error('Failed to fetch plans:', error);
       }
@@ -37,6 +37,13 @@ export const Show_Wifi_plans_2 = () => {
     
     fetchPlans();
   }, []);
+
+  useEffect(() => {
+    const newIsAdmin = user?.isAdmin || false;
+    setIsAdmin(newIsAdmin);
+    // console.log(user?.isAdmin , " from wifi plan 2");
+    // console.log(user , "user from wifi plan 2");
+  },[user]);
 
     // Handle admin plan click
    const handleAdminPlanClick = (plan) => {

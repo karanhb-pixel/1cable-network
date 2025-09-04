@@ -8,6 +8,7 @@
 	box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.04);
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	gap: 0.5rem;
 }
 
@@ -23,6 +24,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1.1rem;
+	
+	align-items: flex-start;
 }
 
 .form-group {
@@ -69,6 +72,7 @@
 	cursor: pointer;
 	box-shadow: 0 2px 8px rgba(49,130,206,0.08);
 	transition: background 0.2s, box-shadow 0.2s;
+	width: 70%;
 }
 .add-user-btn:disabled {
 	background: #b6c6d8;

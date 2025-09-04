@@ -23,8 +23,12 @@ const AddUserSchema = Yup.object().shape({
   end_date: Yup.date().nullable(),
 });
 
-const Add_User = ({ onSubmit }) => {
+const Add_User = ({user}) => {
   const navigate = useNavigate();
+  // console.log("user prop in Add_User:", user);
+  // console.log("user token in Add_User:", user ? user.token : 'No user token');
+  
+  
   return (
   <Formik
     initialValues={{
@@ -45,12 +49,18 @@ const Add_User = ({ onSubmit }) => {
     onSubmit={async (values, { setSubmitting, resetForm }) => {
       try {
         let token = '';
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
+        // const userStr = sessionStorage.getItem('user');
+        if (user) {
           try {
-            const userObj = JSON.parse(userStr);
-            token = userObj.token || '';
+            // const userObj = JSON.parse(userStr);
+            // token = userObj.token || '';
+            token = user.token || '';
+            // console.log("Retrieved token from user prop", token);
+            
           } catch (e) {
+            // console.log("Error parsing user from sessionStorage", e);
+            console.log("Error retrieving user token", e);
+            
             token = '';
           }
         }
@@ -90,7 +100,7 @@ const Add_User = ({ onSubmit }) => {
           <h2 className="add-user-title">Add User</h2>
           {isSubmitting ? (
             <div className="add-user-loading"><LoadingIcon /></div>
-          ) : (
+          ) : (<>
             <div className="add-user-fields">
               <div className="form-group">
                 <label htmlFor="username">Username</label>
@@ -152,8 +162,10 @@ const Add_User = ({ onSubmit }) => {
                 <label htmlFor="end_date">End Date</label>
                 <Field name="end_date" type="date" className="form-input" disabled={disablePlanFields} />
               </div>
-              <button type="submit" className="add-user-btn" disabled={isSubmitting}>Add User</button>
+              {/* <button type="submit" className="add-user-btn" disabled={isSubmitting}>Add User</button> */}
             </div>
+              <button type="submit" className="add-user-btn" disabled={isSubmitting}>Add User</button>
+          </>
           )}
         </Form>
       );

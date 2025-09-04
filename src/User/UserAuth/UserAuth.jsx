@@ -27,7 +27,7 @@ function UserAuth({ onAuthSuccess }) {
       // You may want to check response.data for success
       if (response.data && response.data.token) {
         setError('');
-        localStorage.setItem('user', JSON.stringify(response.data));
+        sessionStorage.setItem('user', JSON.stringify(response.data));
         
         // Check user_role and handle accordingly
         const userRole = response.data.user_role;
