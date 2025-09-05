@@ -90,7 +90,7 @@ export const Show_Wifi_plans_2 = () => {
 
   // Handle saving edited plan (mock implementation)
   const handleSavePlan = async (updatedPlan) => {
-    console.log("Saving updated plan:", updatedPlan);
+    // console.log("Saving updated plan:", updatedPlan);
     const updatedPlans = plans.map((plan) =>
       plan.speed === updatedPlan.speed ? updatedPlan : plan
     );
@@ -103,7 +103,7 @@ export const Show_Wifi_plans_2 = () => {
         price: formatPrice(priceItem.price),
       })),
     }));
-    // you need to re-format the price for server 
+    // you need to re-format the price for server
     const revertedPlans = revertFormattedData(reFormattedPlans);
     // console.log("Reverted plans for saving to server:", revertedPlans);
     try {
@@ -111,18 +111,21 @@ export const Show_Wifi_plans_2 = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${user?.token}`,
+          Authorization: `Bearer ${user?.token}`,
         },
         body: JSON.stringify(revertedPlans[0]),
       });
+
       if (!res.ok) {
         throw new Error("Failed to save data on the server.");
       }
+      const result = await res.json();
+      console.log("Update result:", result);
+      setPlans(reFormattedPlans);
     } catch (error) {
       console.error("Error saving Plan:", error);
       alert("Error saving Plan:", error);
     }
-    setPlans(reFormattedPlans);
     // console.log("Updated plans after save:", reFormattedPlans);
 
     setIsEditing(false);
