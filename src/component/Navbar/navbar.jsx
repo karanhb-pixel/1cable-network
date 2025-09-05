@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../../useUser";
+import { useUser } from "../../utils/useUser";
 import "./navbar.css";
 
 function Navbar() {

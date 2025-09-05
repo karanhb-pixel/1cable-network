@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import './add_User.css';
 import LoadingIcon from "../../component/Loading_icon";
 import axios from "axios";
-import { useUser } from "../../useUser";
+import { useUser } from "../../utils/useUser";
 
 const AddUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),

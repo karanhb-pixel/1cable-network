@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserContext } from './context/UserContext';
+import { UserContext } from '../context/UserContext';
 
 // UserProvider component
 export const UserProvider = ({ children }) => {

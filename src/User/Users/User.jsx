@@ -3,7 +3,7 @@ import UserAuth from "../UserAuth/UserAuth";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import LoadingIcon from "../../component/Loading_icon";
-import { useUser } from "../../useUser";
+import { useUser } from "../../utils/useUser";
 
 const User = () => {
   const { user, setUser } = useUser();

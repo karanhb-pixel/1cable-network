@@ -9,7 +9,7 @@ import Add_User from './User/Add_User/Add_User';
 import './App.css';
 import { Add_Wifi_plans } from './component/Wifi_plan/Add_Wifi_plans/Add_Wifi_plans';
 import { Show_Wifi_plans_2 } from './component/Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2';
-import { UserProvider } from './UserContext';
+import { UserProvider } from './utils/UserContext';
 
 import { Ott_plan } from './component/Ott_plan/Ott_plan';
 function AppContent() {

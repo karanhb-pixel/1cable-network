@@ -2,7 +2,7 @@ import "./../App.css";
 import { Ott_plan } from "./Ott_plan/Ott_plan";
 import { Show_Wifi_plans_2 } from "./Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2";
 import React from "react";
-import { useUser } from "../useUser";
+import { useUser } from "../utils/useUser";
 function Home() {
   const { user } = useUser();
 

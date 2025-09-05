@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PlanCard from '../../PlanCard/PlanCard';
 import EditForm from '../../EditCard/EditCard';
 import {  formatPrice } from '../../../utils/currencyFormatter';
-import { useUser } from "../../../useUser";
+import { useUser } from "../../../utils/useUser";
 
 
 export const Show_Wifi_plans_2 = () => {
