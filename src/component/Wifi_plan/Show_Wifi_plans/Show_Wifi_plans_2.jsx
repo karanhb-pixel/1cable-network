@@ -1,44 +1,38 @@
-
-import React, { useEffect, useState } from 'react'
-import PlanCard from '../../PlanCard/PlanCard';
-import EditForm from '../../EditCard/EditCard';
-import {  formatPrice } from '../../../utils/currencyFormatter';
+import React, { useEffect, useState } from "react";
+import PlanCard from "../../PlanCard/PlanCard";
+import EditForm from "../../EditCard/EditCard";
+import { formatPrice } from "../../../utils/currencyFormatter";
 import { useUser } from "../../../utils/useUser";
 
-
 export const Show_Wifi_plans_2 = () => {
-
   const { user } = useUser();
   const [plans, setPlans] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
 
-    useEffect(() => {
+  useEffect(() => {
     // Fetch the JSON file from the public directory
     const fetchPlans = async () => {
       try {
-        const response = await fetch('/wifi_plans.json');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+        const response_2 = await fetch(
+          `${import.meta.env.VITE_API_ROOT}/wifi-plans`
+        );
+        // console.log(response_2, " response from wifi plan 2");
+        if (!response_2.ok) {
+          throw new Error("Network response was not ok");
         }
-        const data = await response.json();
+        const data_2 = await response_2.json();
+        // console.log(data_2, "data_2 response from wifi plan 2");
 
-        const formattedData = data.map(plan => ({
-          ...plan,
-          prices: plan.prices.map(priceOption => ({
-            ...priceOption,
-            price: formatPrice(priceOption.price)
-          }))
-        }));
-        setPlans(formattedData);
-        // setIsAdmin(true);
+        // setPlans(formattedData);
+        setPlans(formattedData_2(data_2));
+        setIsAdmin(true);
       } catch (error) {
-        console.error('Failed to fetch plans:', error);
+        console.error("Failed to fetch plans:", error);
       }
     };
 
-    
     fetchPlans();
   }, []);
 
@@ -47,30 +41,90 @@ export const Show_Wifi_plans_2 = () => {
     setIsAdmin(newIsAdmin);
     // console.log(user?.isAdmin , " from wifi plan 2");
     // console.log(user , "user from wifi plan 2");
-  },[user]);
+  }, [user]);
 
-    // Handle admin plan click
-   const handleAdminPlanClick = (plan) => {
+  function formattedData_2(data) {
+    return data.map((plan) => ({
+      speed: Number(plan.speed),
+      color: plan.color,
+      prices: [
+        {
+          duration: "6 Month",
+          price: plan["6_month"],
+        },
+        {
+          duration: "12 Month",
+          price: plan["12_month"],
+        },
+      ],
+    }));
+  }
+  // console.log(formattedData_2(data_2), " formattedData_2 from wifi plan 2");
+
+  function revertFormattedData(formattedData) {
+    return formattedData.map((plan, index) => {
+      // Find the prices for 6 and 12 months.
+      const price6Month = plan.prices.find(
+        (price) => price.duration === "6 Month"
+      );
+      const price12Month = plan.prices.find(
+        (price) => price.duration === "12 Month"
+      );
+
+      return {
+        plan_id: plan.plan_id || index + 1,
+        speed: String(plan.speed),
+        color: plan.color,
+        "6_month": price6Month ? price6Month.price : null,
+        "12_month": price12Month ? price12Month.price : null,
+      };
+    });
+  }
+
+  // Handle admin plan click
+  const handleAdminPlanClick = (plan) => {
     console.log(`Admin clicked to edit plan with speed: ${plan.speed} Mbps`);
     setIsEditing(true);
     setEditingPlan(plan);
   };
 
   // Handle saving edited plan (mock implementation)
-  const handleSavePlan = (updatedPlan) => {
-    console.log('Saving updated plan:', updatedPlan);
-    const updatedPlans = plans.map(plan => 
+  const handleSavePlan = async (updatedPlan) => {
+    console.log("Saving updated plan:", updatedPlan);
+    const updatedPlans = plans.map((plan) =>
       plan.speed === updatedPlan.speed ? updatedPlan : plan
     );
+
     // You need to re-format the price for display after saving
-    const reFormattedPlans = updatedPlans.map(plan => ({
+    const reFormattedPlans = updatedPlans.map((plan) => ({
       ...plan,
-      prices: plan.prices.map(priceItem => ({
+      prices: plan.prices.map((priceItem) => ({
         ...priceItem,
         price: formatPrice(priceItem.price),
       })),
     }));
+    // you need to re-format the price for server 
+    const revertedPlans = revertFormattedData(reFormattedPlans);
+    // console.log("Reverted plans for saving to server:", revertedPlans);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_ROOT}/wifi-plans`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify(revertedPlans[0]),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to save data on the server.");
+      }
+    } catch (error) {
+      console.error("Error saving Plan:", error);
+      alert("Error saving Plan:", error);
+    }
     setPlans(reFormattedPlans);
+    // console.log("Updated plans after save:", reFormattedPlans);
+
     setIsEditing(false);
     setEditingPlan(null);
   };
@@ -82,7 +136,7 @@ export const Show_Wifi_plans_2 = () => {
   };
 
   //check if editing mode
-   if (isEditing) {
+  if (isEditing) {
     return (
       <EditForm
         plan={editingPlan}
@@ -105,14 +159,14 @@ export const Show_Wifi_plans_2 = () => {
               onPlanClick={handleAdminPlanClick}
             />
           ))}
-        </div>{!isAdmin && (<>
-        <p className="plans-note">NO OTHER CHARGES</p>
-          <p className="plans-note text-red text-3xl">Free Installations</p>
-          </>)
-          }
-      
+        </div>
+        {!isAdmin && (
+          <>
+            <p className="plans-note">NO OTHER CHARGES</p>
+            <p className="plans-note text-red text-3xl">Free Installations</p>
+          </>
+        )}
       </section>
     </>
   );
-
-}
+};
