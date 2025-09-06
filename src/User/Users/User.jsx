@@ -12,7 +12,8 @@ const User = () => {
 
   const admin_code = () => {
     if (loading) return <LoadingIcon/>;
-
+   
+    
     return (
       <div className="admin-users-table">
         <h2>All Users</h2>
@@ -32,8 +33,8 @@ const User = () => {
               <tr key={idx}>
                 <td>{u.username}</td>
                 <td>{u.email}</td>
-                <td>{u.wifi_plan || "-"}</td>
-                <td>{u.ott_plan || "-"}</td>
+                <td>{u.wifi_speed ? `${u.wifi_speed} Mbps` : "-"}</td>
+                <td>{u.ott_duration || "-"}</td>
                 <td>{u.start_date || "-"}</td>
                 <td>{u.end_date || "-"}</td>
               </tr>
@@ -69,11 +70,11 @@ const User = () => {
             </tr>
             <tr>
               <th>Wifi Plan</th>
-              <td>{details.wifi_plan || "-"}</td>
+              <td>{details.wifi_speed ? `${details.wifi_speed} Mbps` : "-"}</td>
             </tr>
             <tr>
               <th>OTT Plan</th>
-              <td>{details.ott_plan || "-"}</td>
+              <td>{details.ott_duration || "-"}</td>
             </tr>
             <tr>
               <th>Start Date</th>

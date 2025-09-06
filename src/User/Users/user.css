@@ -35,34 +35,40 @@
 }
 .user-details-table {
   width: 100%;
-  max-width: 350px;
+  table-layout: auto;
   border-collapse: collapse;
   background: #23272f;
   border-radius: 0.75rem;
   overflow: hidden;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
 }
-.user-details-table th, .user-details-table td {
-  padding: 0.85rem 1.2rem;
-  text-align: left;
-}
+
 .user-details-table th {
   background: #1e293b;
   color: #a5b4fc;
   font-weight: 600;
   width: 40%;
+  text-align: center;
+  padding: 0.85rem 2.85rem;
 }
 .user-details-table td {
   color: #e6edf3;
   background: #23272f;
   border-bottom: 1px solid #374151;
+  text-align: center;
+  padding: 0.85rem 0;
 }
 .user-details-table tr:last-child td {
   border-bottom: none;
 }
+
+.user-details-table th:not(:last-child),
+    td:not(:last-child) {
+      border-right: 1px solid #374151; /* Or your desired color and style */
+    }
 /* User Login Form Styles */
 .user-page {
-  max-width: 800px;
+  max-width: 1100px;
   margin: 3rem auto;
   padding: 2rem 2rem 1.5rem 2rem;
   background: #181c24;

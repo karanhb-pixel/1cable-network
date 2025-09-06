@@ -6,16 +6,7 @@ import { useUser } from "../utils/useUser";
 function Home() {
   const { user } = useUser();
 
-  // const [isAdmin, setIsAdmin] = useState();
   
-  // useEffect(() => {
-  //   // console.log("user in Home :", user);
-  //   const newIsAdmin = user?.isAdmin || false;
-  //   setIsAdmin(newIsAdmin);
-  //   // console.log("isAdmin in Home : ", newIsAdmin);
-  //   // console.log("user?.isAdmin in Home :", user?.isAdmin);
-
-  // }, [user]);
   return (
     <>
       <main>

@@ -3,83 +3,65 @@ import PlanCard from "../../PlanCard/PlanCard";
 import EditForm from "../../EditCard/EditCard";
 import { formatPrice } from "../../../utils/currencyFormatter";
 import { useUser } from "../../../utils/useUser";
+import LoadingIcon from "../../Loading_icon";
 
 export const Show_Wifi_plans_2 = () => {
   const { user } = useUser();
   const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
 
   useEffect(() => {
-    // Fetch the JSON file from the public directory
-    const fetchPlans = async () => {
-      try {
-        const response_2 = await fetch(
-          `${import.meta.env.VITE_API_ROOT}/wifi-plans`
-        );
-        // console.log(response_2, " response from wifi plan 2");
-        if (!response_2.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data_2 = await response_2.json();
-        // console.log(data_2, "data_2 response from wifi plan 2");
-
-        // setPlans(formattedData);
-        setPlans(formattedData_2(data_2));
-        setIsAdmin(true);
-      } catch (error) {
-        console.error("Failed to fetch plans:", error);
-      }
-    };
-
     fetchPlans();
   }, []);
 
   useEffect(() => {
     const newIsAdmin = user?.isAdmin || false;
     setIsAdmin(newIsAdmin);
-    // console.log(user?.isAdmin , " from wifi plan 2");
-    // console.log(user , "user from wifi plan 2");
   }, [user]);
 
-  function formattedData_2(data) {
-    return data.map((plan) => ({
-      speed: Number(plan.speed),
-      color: plan.color,
-      prices: [
-        {
-          duration: "6 Month",
-          price: plan["6_month"],
-        },
-        {
-          duration: "12 Month",
-          price: plan["12_month"],
-        },
-      ],
-    }));
-  }
-  // console.log(formattedData_2(data_2), " formattedData_2 from wifi plan 2");
+  useEffect(() => {}, [isEditing]);
+  
+  // Fetch WiFi plans with caching
+  const fetchPlans = async () => {
+    console.log("Starting to fetch WiFi plans...");
+    setLoading(true);
 
-  function revertFormattedData(formattedData) {
-    return formattedData.map((plan, index) => {
-      // Find the prices for 6 and 12 months.
-      const price6Month = plan.prices.find(
-        (price) => price.duration === "6 Month"
-      );
-      const price12Month = plan.prices.find(
-        (price) => price.duration === "12 Month"
-      );
+    // 1. Check if cached data exists
+    const cachedPlans = sessionStorage.getItem("wifi_plans");
+    if (cachedPlans) {
+      setPlans(JSON.parse(cachedPlans));
+      console.log("Using cached WiFi plans.");
+    }
 
-      return {
-        plan_id: plan.plan_id || index + 1,
-        speed: String(plan.speed),
-        color: plan.color,
-        "6_month": price6Month ? price6Month.price : null,
-        "12_month": price12Month ? price12Month.price : null,
-      };
-    });
-  }
+    try {
+      // 2. Fetch the latest plans from the server
+      const response_2 = await fetch(
+        `${import.meta.env.VITE_API_ROOT}/wifi-plans`
+      );
+      if (!response_2.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data_2 = await response_2.json();
+      const newPlans = formattedData_2(data_2);
+
+      // 3. Update the state with the fresh data and cache it
+      setPlans(newPlans);
+      sessionStorage.setItem("wifi_plans", JSON.stringify(newPlans));
+      // setIsAdmin(true);
+      console.log("New WiFi plans fetched and cached successfully.");
+    } catch (error) {
+      console.error("Failed to fetch plans:", error);
+      // If fetch fails and there's no cached data, display a message
+      if (!cachedPlans) {
+        setPlans([]);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle admin plan click
   const handleAdminPlanClick = (plan) => {
@@ -149,6 +131,14 @@ export const Show_Wifi_plans_2 = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <LoadingIcon />
+      </div>
+    );
+  }
+
   return (
     <>
       <section id="plans" className="plans-section">
@@ -173,3 +163,42 @@ export const Show_Wifi_plans_2 = () => {
     </>
   );
 };
+
+function formattedData_2(data) {
+  return data.map((plan) => ({
+    plan_id: plan.plan_id,
+    speed: Number(plan.speed),
+    color: plan.color,
+    prices: [
+      {
+        duration: "6 Month",
+        price: plan["6_month"],
+      },
+      {
+        duration: "12 Month",
+        price: plan["12_month"],
+      },
+    ],
+  }));
+}
+// console.log(formattedData_2(data_2), " formattedData_2 from wifi plan 2");
+
+function revertFormattedData(formattedData) {
+  return formattedData.map((plan, index) => {
+    // Find the prices for 6 and 12 months.
+    const price6Month = plan.prices.find(
+      (price) => price.duration === "6 Month"
+    );
+    const price12Month = plan.prices.find(
+      (price) => price.duration === "12 Month"
+    );
+
+    return {
+      plan_id: plan.plan_id || index + 1,
+      speed: String(plan.speed),
+      color: plan.color,
+      "6_month": price6Month ? price6Month.price : null,
+      "12_month": price12Month ? price12Month.price : null,
+    };
+  });
+}

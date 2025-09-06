@@ -349,6 +349,12 @@ body {
     position: relative;
     display: inline-block;
 }
+.loading-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 120px;
+}
 
 /* --- MEDIA QUERIES --- */
 @media (min-width: 640px) {
