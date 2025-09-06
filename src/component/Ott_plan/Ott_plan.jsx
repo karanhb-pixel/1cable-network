@@ -133,14 +133,17 @@ export const Ott_plan = () => {
       <h2 className="plans-title">TV - 300 channels</h2>
       <p className="plans-subtitle">280 SD channel + 20 HD channel</p>
       <div className="plans-grid">
-        {plans.map((plan, index) => (
+        {plans.map((plan, index) =>{ 
+        if (plan.plan_id === "0") { return null; }
+        return(
           <PlanCard
             key={index}
             plan={plan}
             isAdmin={isAdmin}
             onPlanClick={handleAdminPlanClick}
           />
-        ))}
+        );
+        })}
       </div>
     </section>
   );

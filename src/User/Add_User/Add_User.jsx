@@ -185,19 +185,32 @@ const Add_User = () => {
                   </div>
                   <div className="form-group">
                     <label htmlFor="wifi_plan">Wifi Plan</label>
-                    <Field
+                    <Field as="select"
                       name="wifi_plan"
                       className="form-input"
                       disabled={disablePlanFields}
-                    />
+                    >
+                      <option value="" disabled>Select Wifi Plan</option>
+                      <option value="1">50 Mbps</option>
+                      <option value="2">60 Mbps</option>
+                      <option value="3">80 Mbps</option>
+                      <option value="4">100 Mbps</option>
+                      <option value="0">None</option>
+                    </Field>
                   </div>
                   <div className="form-group">
                     <label htmlFor="ott_plan">OTT Plan</label>
-                    <Field
+                    <Field as ="select"
                       name="ott_plan"
                       className="form-input"
                       disabled={disablePlanFields}
-                    />
+                    >
+                      <option value="" disabled>Select OTT Plan</option>
+                      <option value="1">3 Months</option>
+                      <option value="2">6 Months</option>
+                      <option value="3">12 Months</option>
+                      <option value="0">None</option>
+                    </Field>
                   </div>
                   <div className="form-group">
                     <label htmlFor="start_date">Start Date</label>
@@ -217,7 +230,7 @@ const Add_User = () => {
                       disabled={disablePlanFields}
                     />
                   </div>
-                  {/* <button type="submit" className="add-user-btn" disabled={isSubmitting}>Add User</button> */}
+                  
                 </div>
                 <button
                   type="submit"

@@ -144,14 +144,17 @@ export const Show_Wifi_plans_2 = () => {
       <section id="plans" className="plans-section">
         <h2 className="plans-title">HIGH SPEED UNLIMITED PLANS</h2>
         <div className="plans-grid">
-          {plans.map((plan) => (
+          {plans.map((plan) => {
+            if (plan.plan_id === "0") { return null; }
+            return (
             <PlanCard
               key={plan.speed}
               plan={plan}
               isAdmin={isAdmin}
               onPlanClick={handleAdminPlanClick}
             />
-          ))}
+            );
+          })}
         </div>
         {!isAdmin && (
           <>
