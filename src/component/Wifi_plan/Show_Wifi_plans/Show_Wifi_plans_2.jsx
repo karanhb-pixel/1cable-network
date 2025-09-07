@@ -26,14 +26,14 @@ export const Show_Wifi_plans_2 = () => {
   
   // Fetch WiFi plans with caching
   const fetchPlans = async () => {
-    console.log("Starting to fetch WiFi plans...");
+    // console.log("Starting to fetch WiFi plans...");
     setLoading(true);
 
     // 1. Check if cached data exists
     const cachedPlans = sessionStorage.getItem("wifi_plans");
     if (cachedPlans) {
       setPlans(JSON.parse(cachedPlans));
-      console.log("Using cached WiFi plans.");
+      // console.log("Using cached WiFi plans.");
     }
 
     try {
@@ -51,7 +51,7 @@ export const Show_Wifi_plans_2 = () => {
       setPlans(newPlans);
       sessionStorage.setItem("wifi_plans", JSON.stringify(newPlans));
       // setIsAdmin(true);
-      console.log("New WiFi plans fetched and cached successfully.");
+      // console.log("New WiFi plans fetched and cached successfully.");
     } catch (error) {
       console.error("Failed to fetch plans:", error);
       // If fetch fails and there's no cached data, display a message
@@ -72,11 +72,13 @@ export const Show_Wifi_plans_2 = () => {
 
   // Handle saving edited plan (mock implementation)
   const handleSavePlan = async (updatedPlan) => {
-    // console.log("Saving updated plan:", updatedPlan);
+    console.log("Saving updated plan:", updatedPlan);
+
     const updatedPlans = plans.map((plan) =>
       plan.speed === updatedPlan.speed ? updatedPlan : plan
     );
 
+   
     // You need to re-format the price for display after saving
     const reFormattedPlans = updatedPlans.map((plan) => ({
       ...plan,
@@ -85,9 +87,9 @@ export const Show_Wifi_plans_2 = () => {
         price: formatPrice(priceItem.price),
       })),
     }));
-    // you need to re-format the price for server
-    const revertedPlans = revertFormattedData(reFormattedPlans);
-    // console.log("Reverted plans for saving to server:", revertedPlans);
+
+    const planToSave = revertFormattedData([updatedPlan]);
+    console.log("Plan to save to server:", planToSave);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_ROOT}/wifi-plans`, {
         method: "PUT",
@@ -95,7 +97,7 @@ export const Show_Wifi_plans_2 = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user?.token}`,
         },
-        body: JSON.stringify(revertedPlans[0]),
+        body: JSON.stringify(planToSave[0]),
       });
 
       if (!res.ok) {

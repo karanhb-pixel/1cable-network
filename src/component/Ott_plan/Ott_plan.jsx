@@ -25,7 +25,7 @@ export const Ott_plan = () => {
   }, []);
 
   const fetchedOttPlans = async () => {
-    console.log("Starting to fetch OTT plans...");
+    // console.log("Starting to fetch OTT plans...");
     setLoading(true);
 
     // 1. Check for cached data in sessionStorage
@@ -52,7 +52,7 @@ export const Ott_plan = () => {
       // console.log(reFormattedPlans, "reFormattedData from ott plan");
       setPlans(reFormattedPlans);
       sessionStorage.setItem("ott_plans", JSON.stringify(reFormattedPlans));
-      console.log("New OTT plans fetched and cached successfully.");
+      // console.log("New OTT plans fetched and cached successfully.");
     } catch (error) {
       console.error("Failed to fetch plans:", error);
       if (!cachedPlans) {

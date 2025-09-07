@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -27,6 +27,50 @@ const AddUserSchema = Yup.object().shape({
 const Add_User = () => {
   const { user } = useUser();
   const navigate = useNavigate();
+  const [wifiPlans, setWifiPlans] = useState([]);
+  const [ottPlans, setOttPlans] = useState([]);
+  
+  useEffect(() => {
+
+    const cachedWifiPlans = sessionStorage.getItem("wifi_plans");
+    const cachedOttPlans = sessionStorage.getItem("ott_plans");
+    if (cachedWifiPlans ) {
+      setWifiPlans(JSON.parse(cachedWifiPlans));
+      console.log("Using cached WiFi plans.");
+    }
+    if (cachedOttPlans ) {
+      setOttPlans(JSON.parse(cachedOttPlans));
+      console.log("Using cached OTT plans.");
+    }
+
+    const fetchPlans = async () => {
+    try {
+      // Fetch latest plans from server
+      const responce_wifi = await fetch(
+        `${import.meta.env.VITE_API_ROOT}/wifi-plans`
+      );
+      const data_wifi = await responce_wifi.json();
+      const responce_ott = await fetch(
+        `${import.meta.env.VITE_API_ROOT}/ott-plans`
+      );
+      const data_ott = await responce_ott.json();
+      console.log(data_wifi, "wifi data in add user");
+      console.log(data_ott, "ott data in add user");
+      setWifiPlans(data_wifi);
+      setOttPlans(data_ott);
+      
+      if(!responce_wifi.ok || !responce_ott.ok){
+        throw new Error("Network response was not ok");
+      }
+    } catch (error) {
+      console.error("Failed to fetch plans:", error);
+      if(!cachedWifiPlans){ setWifiPlans([]); }
+      if(!cachedOttPlans){ setOttPlans([]);}
+    }
+  }
+
+  fetchPlans();
+  }, []);
 
   return (
     <Formik
@@ -62,7 +106,7 @@ const Add_User = () => {
             {
               headers: {
                 "Content-Type": "application/json",
-                'Authorization': token ? `Bearer ${token}` : "",
+                Authorization: token ? `Bearer ${token}` : "",
               },
             }
           );
@@ -185,30 +229,41 @@ const Add_User = () => {
                   </div>
                   <div className="form-group">
                     <label htmlFor="wifi_plan">Wifi Plan</label>
-                    <Field as="select"
+                    <Field
+                      as="select"
                       name="wifi_plan"
                       className="form-input"
                       disabled={disablePlanFields}
                     >
-                      <option value="" disabled>Select Wifi Plan</option>
-                      <option value="1">50 Mbps</option>
-                      <option value="2">60 Mbps</option>
-                      <option value="3">80 Mbps</option>
-                      <option value="4">100 Mbps</option>
+                      <option value="" disabled>
+                        Select Wifi Plan
+                      </option>
+                      {wifiPlans.length > 0 ? (
+                        wifiPlans.map((plan)=>{
+                          if (plan.plan_id === "0") { return null; }
+                          return <option value={plan.plan_id} key={plan.plan_id}>{plan.speed} Mbps</option>
+                      })): null}
+                      
                       <option value="0">None</option>
                     </Field>
                   </div>
                   <div className="form-group">
                     <label htmlFor="ott_plan">OTT Plan</label>
-                    <Field as ="select"
+                    <Field
+                      as="select"
                       name="ott_plan"
                       className="form-input"
                       disabled={disablePlanFields}
                     >
-                      <option value="" disabled>Select OTT Plan</option>
-                      <option value="1">3 Months</option>
-                      <option value="2">6 Months</option>
-                      <option value="3">12 Months</option>
+                      <option value="" disabled>
+                        Select OTT Plan
+                      </option>
+                      {ottPlans.length > 0 ? (
+                        ottPlans.map((plan)=>{
+                          if (plan.plan_id === "0") { return null; }
+                          return <option value={plan.plan_id} key={plan.plan_id}>{plan.duration}</option>
+                      })): null}
+                     
                       <option value="0">None</option>
                     </Field>
                   </div>
@@ -230,7 +285,6 @@ const Add_User = () => {
                       disabled={disablePlanFields}
                     />
                   </div>
-                  
                 </div>
                 <button
                   type="submit"
