@@ -1,0 +1,3 @@
+[submodule "server/iws-custom-code"]
+	path = server/iws-custom-code
+	url = https://github.com/karanhb-pixel/1cable-network-backend.git
