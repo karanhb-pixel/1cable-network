@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import "./add_User.css";
+import "./Edit_User.css";
 import LoadingIcon from "../../component/Loading_icon";
 import axios from "axios";
 import { useUser } from "../../utils/useUser";
+import "./Edit_User.css";
 
-const AddUserSchema = Yup.object().shape({
+const EditUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
   name: Yup.string(),
   first_name: Yup.string(),
@@ -15,94 +16,166 @@ const AddUserSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   nickname: Yup.string(),
   roles: Yup.string().required("Role is required"),
-  password: Yup.string()
-    .min(4, "Password too short")
-    .required("Password is required"),
+  password: Yup.string().min(4, "Password too short"), // Optional for editing
   wifi_plan: Yup.string(),
   ott_plan: Yup.string(),
   start_date: Yup.date().nullable(),
   end_date: Yup.date().nullable(),
 });
 
-const Add_User = () => {
+const Edit_User = () => {
   const { user } = useUser();
   const navigate = useNavigate();
+  const { id } = useParams(); // Assuming route is /edit-user/:id
+  const location = useLocation();
+  const propUserData = location.state?.userData;
   const [wifiPlans, setWifiPlans] = useState([]);
   const [ottPlans, setOttPlans] = useState([]);
-  
-  useEffect(() => {
+  const [userData, setUserData] = useState(propUserData || null);
+  const [loading, setLoading] = useState(!propUserData);
 
+  useEffect(() => {
     const cachedWifiPlans = sessionStorage.getItem("wifi_plans");
     const cachedOttPlans = sessionStorage.getItem("ott_plans");
-    if (cachedWifiPlans ) {
+    if (cachedWifiPlans) {
       setWifiPlans(JSON.parse(cachedWifiPlans));
-      console.log("Using cached WiFi plans.");
+      // console.log("Using cached WiFi plans.");
     }
-    if (cachedOttPlans ) {
+    if (cachedOttPlans) {
       setOttPlans(JSON.parse(cachedOttPlans));
-      console.log("Using cached OTT plans.");
+      // console.log("Using cached OTT plans.");
     }
 
     const fetchPlans = async () => {
-    try {
-      // Fetch latest plans from server
-      const responce_wifi = await fetch(
-        `${import.meta.env.VITE_API_ROOT}/wifi-plans`
-      );
-      const data_wifi = await responce_wifi.json();
-      const responce_ott = await fetch(
-        `${import.meta.env.VITE_API_ROOT}/ott-plans`
-      );
-      const data_ott = await responce_ott.json();
-      console.log(data_wifi, "wifi data in add user");
-      console.log(data_ott, "ott data in add user");
-      setWifiPlans(data_wifi);
-      setOttPlans(data_ott);
-      
-      if(!responce_wifi.ok || !responce_ott.ok){
-        throw new Error("Network response was not ok");
+      try {
+        const response_wifi = await fetch(
+          `${import.meta.env.VITE_API_ROOT}/wifi-plans`
+        );
+        const data_wifi = await response_wifi.json();
+        const response_ott = await fetch(
+          `${import.meta.env.VITE_API_ROOT}/ott-plans`
+        );
+        const data_ott = await response_ott.json();
+        // console.log(data_wifi, "wifi data in edit user");
+        // console.log(data_ott, "ott data in edit user");
+        setWifiPlans(data_wifi);
+        setOttPlans(data_ott);
+
+        if (!response_wifi.ok || !response_ott.ok) {
+          throw new Error("Network response was not ok");
+        }
+      } catch (error) {
+        console.error("Failed to fetch plans:", error);
+        if (!cachedWifiPlans) setWifiPlans([]);
+        if (!cachedOttPlans) setOttPlans([]);
       }
-    } catch (error) {
-      console.error("Failed to fetch plans:", error);
-      if(!cachedWifiPlans){ setWifiPlans([]); }
-      if(!cachedOttPlans){ setOttPlans([]);}
-    }
-  }
+    };
 
-  fetchPlans();
+    fetchPlans();
   }, []);
-
-  return (
-    <Formik
-      initialValues={{
-        username: "",
-        name: "",
-        first_name: "",
-        last_name: "",
-        email: "",
-        nickname: "",
-        roles: "",
-        password: "",
-        wifi_plan: "",
-        ott_plan: "",
-        start_date: "",
-        end_date: "",
-      }}
-      validationSchema={AddUserSchema}
-      onSubmit={async (values, { setSubmitting, resetForm }) => {
+  // console.log(id,"id in edit user");
+  
+  useEffect(() => {
+    if (propUserData && id) {
+      // Fetch user data if not provided as props
+      const fetchUserData = async () => {
         try {
           let token = "";
           if (user) {
-            try {
-              token = user.token || "";
-            } catch (e) {
-              console.log("Error retrieving user token", e);
-              token = "";
-            }
+            token = user.token || "";
           }
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_ROOT}/add-user`,
-            values,
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_ROOT}/user-plan/${id}`,
+            {
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
+            }
+          );
+          setUserData(response.data);
+        } catch (error) {
+          console.error("Failed to fetch user data:", error);
+          alert("Failed to load user data.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchUserData();
+    } else {
+      setLoading(false);
+    }
+  }, [propUserData, id, user]);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <LoadingIcon />
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return <div>User data not found.</div>;
+  }
+  // console.log("userData before setting wifi_plan:", userData);
+
+  const selectedwifiPlan = wifiPlans.find(
+    (plan) => plan.speed === userData.wifi_speed
+  );
+
+  if (selectedwifiPlan) {
+    userData.wifi_plan = selectedwifiPlan.plan_id;
+  }
+  // console.log("userData after setting wifi_plan:", userData);
+
+  const selectedOttPlan = ottPlans.find(
+    (plan) => plan.duration === userData.ott_duration
+  );
+  if (selectedOttPlan) {
+    userData.ott_plan = selectedOttPlan.plan_id;
+  }
+  // console.log("userData after setting ott_plan:", userData);
+
+
+  const initialValues = {
+    username: userData.username || "",
+    name: userData.display_name || "",
+    first_name: userData.first_name || "",
+    last_name: userData.last_name || "",
+    email: userData.email || "",
+    nickname: userData.nicename || "",
+    roles: userData.roles || "",
+    password: "", // Leave empty for editing
+    wifi_plan: userData.wifi_plan || "",
+    ott_plan: userData.ott_plan || "",
+    start_date: userData.start_date
+      ? new Date(userData.start_date).toISOString().split("T")[0]
+      : "",
+    end_date: userData.end_date
+      ? new Date(userData.end_date).toISOString().split("T")[0]
+      : "",
+  };
+  console.log("Initial Values:", initialValues);
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      validationSchema={EditUserSchema}
+      enableReinitialize
+      onSubmit={async (values, { setSubmitting }) => {
+        
+        try {
+          let token = "";
+          if (user) {
+            token = user.token || "";
+          }
+          const payload = { ...values };
+          if (!payload.password) {
+            delete payload.password; // Don't send empty password
+          }
+          const response = await axios.put(
+            `${import.meta.env.VITE_API_ROOT}/user-plans`,
+            payload,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -110,11 +183,10 @@ const Add_User = () => {
               },
             }
           );
-          resetForm();
           if (response && response.data && response.data.success) {
-            alert(`User created successfully! Username: ${values.username}`);
+            alert(`User updated successfully! Username: ${values.username}`);
           } else {
-            alert("User created, but no confirmation from server.");
+            alert("User updated, but no confirmation from server.");
           }
           navigate("/user");
         } catch (error) {
@@ -128,7 +200,7 @@ const Add_User = () => {
           } else if (error.message) {
             msg = error.message;
           }
-          alert(`Failed to create user: ${msg}`);
+          alert(`Failed to update user: ${msg}`);
         }
         setSubmitting(false);
       }}
@@ -136,15 +208,15 @@ const Add_User = () => {
       {({ isSubmitting, values }) => {
         const disablePlanFields = values.roles === "administrator";
         return (
-          <Form className="add-user-form">
-            <h2 className="add-user-title">Add User</h2>
+          <Form className="edit-user-form">
+            <h2 className="edit-user-title">Edit User</h2>
             {isSubmitting ? (
               <div className="loading-container">
                 <LoadingIcon />
               </div>
             ) : (
               <>
-                <div className="add-user-fields">
+                <div className="edit-user-fields">
                   <div className="form-group">
                     <label htmlFor="username">Username</label>
                     <Field name="username" className="form-input" />
@@ -215,7 +287,9 @@ const Add_User = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="password">
+                      Password (leave empty to keep current)
+                    </label>
                     <Field
                       name="password"
                       type="password"
@@ -229,6 +303,7 @@ const Add_User = () => {
                   </div>
                   <div className="form-group">
                     <label htmlFor="wifi_plan">Wifi Plan</label>
+
                     <Field
                       as="select"
                       name="wifi_plan"
@@ -238,12 +313,16 @@ const Add_User = () => {
                       <option value="" disabled>
                         Select Wifi Plan
                       </option>
-                      {wifiPlans.length > 0 ? (
-                        wifiPlans.map((plan)=>{
-                          if (plan.plan_id === "0") { return null; }
-                          return <option value={plan.plan_id} key={plan.plan_id}>{plan.speed} Mbps</option>
-                      })): null}
-                      
+                      {wifiPlans.length > 0
+                        ? wifiPlans.map((plan) => {
+                            if (plan.plan_id === "0") return null;
+                            return (
+                              <option value={plan.plan_id} key={plan.plan_id}>
+                                {plan.speed} Mbps
+                              </option>
+                            );
+                          })
+                        : null}
                       <option value="0">None</option>
                     </Field>
                   </div>
@@ -258,12 +337,16 @@ const Add_User = () => {
                       <option value="" disabled>
                         Select OTT Plan
                       </option>
-                      {ottPlans.length > 0 ? (
-                        ottPlans.map((plan)=>{
-                          if (plan.plan_id === "0") { return null; }
-                          return <option value={plan.plan_id} key={plan.plan_id}>{plan.duration}</option>
-                      })): null}
-                     
+                      {ottPlans.length > 0
+                        ? ottPlans.map((plan) => {
+                            if (plan.plan_id === "0") return null;
+                            return (
+                              <option value={plan.plan_id} key={plan.plan_id}>
+                                {plan.duration}
+                              </option>
+                            );
+                          })
+                        : null}
                       <option value="0">None</option>
                     </Field>
                   </div>
@@ -286,13 +369,22 @@ const Add_User = () => {
                     />
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  className="add-user-btn"
-                  disabled={isSubmitting}
-                >
-                  Add User
-                </button>
+                <div className="button-group">
+                  <button
+                    type="submit"
+                    className="edit-user-btn"
+                    disabled={isSubmitting}
+                  >
+                    Update User
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => navigate("/user")}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </>
             )}
           </Form>
@@ -302,4 +394,4 @@ const Add_User = () => {
   );
 };
 
-export default Add_User;
+export default Edit_User;

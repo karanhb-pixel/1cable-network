@@ -4,19 +4,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import LoadingIcon from "../../component/Loading_icon";
 import { useUser } from "../../utils/useUser";
+import { useNavigate } from "react-router-dom";
+import Add_User from "../Add_User/Add_User";
 
 const User = () => {
   const { user, setUser } = useUser();
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const admin_code = () => {
-    if (loading) return <LoadingIcon/>;
-   
-    
+    if (loading) return <LoadingIcon />;
+
     return (
       <div className="admin-users-table">
-        <h2>All Users</h2>
+        <div className="admin-user-table-head">
+          <h2>All Users</h2>
+          <button className="add_btn" onClick={() => navigate("/add_user")}>
+            Add User
+          </button>
+        </div>
         <table className="user-details-table">
           <thead>
             <tr>
@@ -26,6 +32,8 @@ const User = () => {
               <th>OTT Plan</th>
               <th>Start Date</th>
               <th>End Date</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +45,12 @@ const User = () => {
                 <td>{u.ott_duration || "-"}</td>
                 <td>{u.start_date || "-"}</td>
                 <td>{u.end_date || "-"}</td>
+                <td>
+                  <button className="edit_user_btn" onClick={()=>navigate(`/edit-user/${u.plan_id}`, { state: { userData: u } })}>Edit</button>
+                  </td>
+                <td>
+                  <button className="delete_user_btn">Delete</button>
+                  </td>
               </tr>
             ))}
           </tbody>
@@ -52,7 +66,7 @@ const User = () => {
   };
 
   const user_code = () => {
-    if (loading) return <LoadingIcon/>;
+    if (loading) return <LoadingIcon />;
     const details = allUsers[0];
     if (!details) return <div>No user details found.</div>;
     return (
@@ -95,13 +109,13 @@ const User = () => {
       </div>
     );
   };
-  
+
   useEffect(() => {
     if (user) {
       setLoading(true);
       axios
         .get(`${import.meta.env.VITE_API_ROOT}/user-plans`, {
-          headers: user.token ? { Authorization: `Bearer ${user.token}` } : {}
+          headers: user.token ? { Authorization: `Bearer ${user.token}` } : {},
         })
         .then((res) => setAllUsers(res.data))
         .catch(() => setAllUsers([]))
@@ -113,10 +127,13 @@ const User = () => {
     <div className="user-page">
       {!user ? (
         <UserAuth onAuthSuccess={setUser} />
-      ) : user.isAdmin ?  admin_code() : user_code()}
+      ) : user.isAdmin ? (
+        admin_code()
+      ) : (
+        user_code()
+      )}
     </div>
   );
 };
-
 
 export default User;

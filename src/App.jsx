@@ -12,6 +12,7 @@ import { Show_Wifi_plans_2 } from './component/Wifi_plan/Show_Wifi_plans/Show_Wi
 import { UserProvider } from './utils/UserContext';
 
 import { Ott_plan } from './component/Ott_plan/Ott_plan';
+import Edit_User from './User/Edit_User/Edit_User';
 function AppContent() {
   
 
@@ -25,6 +26,7 @@ function AppContent() {
         <Route path='/add_Wifi_plans' element={<Add_Wifi_plans/>} />
         <Route path='/show_Wifi_plans_2' element={<Show_Wifi_plans_2/>} />
         <Route path='/ott_plan' element={<Ott_plan/>} />
+        <Route path="/edit-user/:id" element={<Edit_User />} />
       </Routes>
       <Footer />
     </>
