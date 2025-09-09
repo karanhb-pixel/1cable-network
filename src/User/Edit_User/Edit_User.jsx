@@ -143,7 +143,7 @@ const Edit_User = () => {
     first_name: userData.first_name || "",
     last_name: userData.last_name || "",
     email: userData.email || "",
-    nickname: userData.nicename || "",
+    nicename: userData.nicename || "",
     roles: userData.roles || "",
     password: "", // Leave empty for editing
     wifi_plan: userData.wifi_plan || "",
@@ -174,7 +174,7 @@ const Edit_User = () => {
             delete payload.password; // Don't send empty password
           }
           const response = await axios.put(
-            `${import.meta.env.VITE_API_ROOT}/user-plans`,
+            `${import.meta.env.VITE_API_ROOT}/user-plan/${id}`,
             payload,
             {
               headers: {
@@ -183,10 +183,14 @@ const Edit_User = () => {
               },
             }
           );
+           
           if (response && response.data && response.data.success) {
             alert(`User updated successfully! Username: ${values.username}`);
+          }else if(response && response.data.message === 'No changes detected. Update not performed.'){
+              alert('No changes detected. Update not performed.');
+               
           } else {
-            alert("User updated, but no confirmation from server.");
+            alert(`User updated, but no confirmation from server.,${response.data}`);
           }
           navigate("/user");
         } catch (error) {
@@ -264,9 +268,9 @@ const Edit_User = () => {
                   </div>
                   <div className="form-group">
                     <label htmlFor="nickname">Nickname</label>
-                    <Field name="nickname" className="form-input" />
+                    <Field name="nicename" className="form-input" />
                     <ErrorMessage
-                      name="nickname"
+                      name="nicename"
                       component="div"
                       className="form-error"
                     />
