@@ -49,7 +49,7 @@ const User = () => {
                   <button className="edit_user_btn" onClick={()=>navigate(`/edit-user/${u.plan_id}`, { state: { userData: u } })}>Edit</button>
                   </td>
                 <td>
-                  <button className="delete_user_btn">Delete</button>
+                  <button className="delete_user_btn" onClick={()=>navigate(`/delete-user/${u.plan_id}`,{state: {userData: u}})}>Delete</button>
                   </td>
               </tr>
             ))}

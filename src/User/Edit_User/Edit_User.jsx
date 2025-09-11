@@ -56,8 +56,6 @@ const Edit_User = () => {
           `${import.meta.env.VITE_API_ROOT}/ott-plans`
         );
         const data_ott = await response_ott.json();
-        // console.log(data_wifi, "wifi data in edit user");
-        // console.log(data_ott, "ott data in edit user");
         setWifiPlans(data_wifi);
         setOttPlans(data_ott);
 
