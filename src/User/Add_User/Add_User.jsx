@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./add_User.css";
 import LoadingIcon from "../../component/Loading_icon";
-import axios from "axios";
-import { useUser } from "../../utils/useUser";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser } from "../../store/authSlice";
+import { selectWifiPlans, selectOttPlans, fetchWifiPlans, fetchOttPlans } from "../../store/plansSlice";
+import { selectError as selectUsersError, addUser } from "../../store/usersSlice";
 
 const AddUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -25,52 +27,17 @@ const AddUserSchema = Yup.object().shape({
 });
 
 const Add_User = () => {
-  const { user } = useUser();
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [wifiPlans, setWifiPlans] = useState([]);
-  const [ottPlans, setOttPlans] = useState([]);
+  const wifiPlans = useSelector(selectWifiPlans);
+  const ottPlans = useSelector(selectOttPlans);
+  const error = useSelector(selectUsersError);
   
   useEffect(() => {
-
-    const cachedWifiPlans = sessionStorage.getItem("wifi_plans");
-    const cachedOttPlans = sessionStorage.getItem("ott_plans");
-    if (cachedWifiPlans ) {
-      setWifiPlans(JSON.parse(cachedWifiPlans));
-      console.log("Using cached WiFi plans.");
-    }
-    if (cachedOttPlans ) {
-      setOttPlans(JSON.parse(cachedOttPlans));
-      console.log("Using cached OTT plans.");
-    }
-
-    const fetchPlans = async () => {
-    try {
-      // Fetch latest plans from server
-      const responce_wifi = await fetch(
-        `${import.meta.env.VITE_API_ROOT}/wifi-plans`
-      );
-      const data_wifi = await responce_wifi.json();
-      const responce_ott = await fetch(
-        `${import.meta.env.VITE_API_ROOT}/ott-plans`
-      );
-      const data_ott = await responce_ott.json();
-      console.log(data_wifi, "wifi data in add user");
-      console.log(data_ott, "ott data in add user");
-      setWifiPlans(data_wifi);
-      setOttPlans(data_ott);
-      
-      if(!responce_wifi.ok || !responce_ott.ok){
-        throw new Error("Network response was not ok");
-      }
-    } catch (error) {
-      console.error("Failed to fetch plans:", error);
-      if(!cachedWifiPlans){ setWifiPlans([]); }
-      if(!cachedOttPlans){ setOttPlans([]);}
-    }
-  }
-
-  fetchPlans();
-  }, []);
+    dispatch(fetchWifiPlans());
+    dispatch(fetchOttPlans());
+  }, [dispatch]);
 
   return (
     <Formik
@@ -91,41 +58,13 @@ const Add_User = () => {
       validationSchema={AddUserSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          let token = "";
-          if (user) {
-            try {
-              token = user.token || "";
-            } catch (e) {
-              console.log("Error retrieving user token", e);
-              token = "";
-            }
-          }
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_ROOT}/add-user`,
-            values,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: token ? `Bearer ${token}` : "",
-              },
-            }
-          );
+          await dispatch(addUser(values)).unwrap();
           resetForm();
-          if (response && response.data && response.data.success) {
-            alert(`User created successfully! Username: ${values.username}`);
-          } else {
-            alert("User created, but no confirmation from server.");
-          }
+          alert(`User created successfully! Username: ${values.username}`);
           navigate("/user");
         } catch (error) {
           let msg = "An error occurred.";
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            msg = error.response.data.error;
-          } else if (error.message) {
+          if (error.message) {
             msg = error.message;
           }
           alert(`Failed to create user: ${msg}`);
@@ -138,6 +77,7 @@ const Add_User = () => {
         return (
           <Form className="add-user-form">
             <h2 className="add-user-title">Add User</h2>
+            {error && <div className="form-error">{error}</div>}
             {isSubmitting ? (
               <div className="loading-container">
                 <LoadingIcon />

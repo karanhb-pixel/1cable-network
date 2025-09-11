@@ -6,7 +6,7 @@ import { useUser } from "../../../utils/useUser";
 import LoadingIcon from "../../Loading_icon";
 
 export const Show_Wifi_plans_2 = () => {
-  const { user } = useUser();
+  const { user } = useUser() || {};
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration

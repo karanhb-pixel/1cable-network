@@ -4,6 +4,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/authSlice';
 
 
 const validationSchema = Yup.object({
@@ -12,8 +14,9 @@ const validationSchema = Yup.object({
 });
 
 
-function UserAuth({ onAuthSuccess }) {
+function UserAuth() {
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
   const handleLogin = async (values, { setSubmitting }) => {
     setError('');
@@ -27,21 +30,7 @@ function UserAuth({ onAuthSuccess }) {
       // You may want to check response.data for success
       if (response.data && response.data.token) {
         setError('');
-        sessionStorage.setItem('user', JSON.stringify(response.data));
-        
-        // Check user_role and handle accordingly
-        const userRole = response.data.user_role;
-        if (userRole === 'administrator') {
-          
-          // Handle admin login (e.g., redirect, show admin UI, etc.)
-          onAuthSuccess({ ...response.data, isAdmin: true });
-        } else if (userRole === 'subscriber') {
-         
-          // Handle regular user login
-          onAuthSuccess({ ...response.data, isAdmin: false });
-        } else {
-          setError('Unauthorized role.');
-        }
+        dispatch(login(response.data));
       } else {
         setError('Invalid credentials.');
       }
@@ -49,6 +38,9 @@ function UserAuth({ onAuthSuccess }) {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
+        // console.log(response);
+        console.log(err);
+        
         setError('Server error.');
       }
     }

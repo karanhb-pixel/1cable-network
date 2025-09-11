@@ -4,7 +4,7 @@ import { useUser } from "../../utils/useUser";
 import "./navbar.css";
 
 function Navbar() {
-  const { user, setUser } = useUser();
+  const { user, setUser } = useUser() || {};
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
 

@@ -4,7 +4,7 @@ import { Show_Wifi_plans_2 } from "./Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2
 import React from "react";
 import { useUser } from "../utils/useUser";
 function Home() {
-  const { user } = useUser();
+  const { user } = useUser() || {};
 
   
   return (

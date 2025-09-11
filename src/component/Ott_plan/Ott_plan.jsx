@@ -7,7 +7,7 @@ export const Ott_plan = () => {
   {
     /* <!-- OTT Services Section --> */
   }
-  const { user } = useUser();
+  const { user } = useUser() || {};
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);

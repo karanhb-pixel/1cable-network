@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./Edit_User.css";
 import LoadingIcon from "../../component/Loading_icon";
-import axios from "axios";
-import { useUser } from "../../utils/useUser";
-import "./Edit_User.css";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser } from "../../store/authSlice";
+import { selectAllUsers, selectLoading as selectUsersLoading, selectError as selectUsersError, fetchUsers, updateUser } from "../../store/usersSlice";
+import { selectWifiPlans, selectOttPlans, fetchWifiPlans, fetchOttPlans } from "../../store/plansSlice";
 
 const EditUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -14,7 +15,7 @@ const EditUserSchema = Yup.object().shape({
   first_name: Yup.string(),
   last_name: Yup.string(),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  nickname: Yup.string(),
+  nicename: Yup.string(),
   roles: Yup.string().required("Role is required"),
   password: Yup.string().min(4, "Password too short"), // Optional for editing
   wifi_plan: Yup.string(),
@@ -24,85 +25,33 @@ const EditUserSchema = Yup.object().shape({
 });
 
 const Edit_User = () => {
-  const { user } = useUser();
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams(); // Assuming route is /edit-user/:id
   const location = useLocation();
   const propUserData = location.state?.userData;
-  const [wifiPlans, setWifiPlans] = useState([]);
-  const [ottPlans, setOttPlans] = useState([]);
-  const [userData, setUserData] = useState(propUserData || null);
-  const [loading, setLoading] = useState(!propUserData);
+  const allUsers = useSelector(selectAllUsers);
+  const loading = useSelector(selectUsersLoading);
+  const error = useSelector(selectUsersError);
+  const wifiPlans = useSelector(selectWifiPlans);
+  const ottPlans = useSelector(selectOttPlans);
+  const userData = useMemo(() => {
+    if (propUserData) return propUserData;
+    return allUsers.find(u => u.plan_id === id);
+  }, [allUsers, propUserData, id]);
 
   useEffect(() => {
-    const cachedWifiPlans = sessionStorage.getItem("wifi_plans");
-    const cachedOttPlans = sessionStorage.getItem("ott_plans");
-    if (cachedWifiPlans) {
-      setWifiPlans(JSON.parse(cachedWifiPlans));
-      // console.log("Using cached WiFi plans.");
+    dispatch(fetchWifiPlans());
+    dispatch(fetchOttPlans());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchUsers());
     }
-    if (cachedOttPlans) {
-      setOttPlans(JSON.parse(cachedOttPlans));
-      // console.log("Using cached OTT plans.");
-    }
-
-    const fetchPlans = async () => {
-      try {
-        const response_wifi = await fetch(
-          `${import.meta.env.VITE_API_ROOT}/wifi-plans`
-        );
-        const data_wifi = await response_wifi.json();
-        const response_ott = await fetch(
-          `${import.meta.env.VITE_API_ROOT}/ott-plans`
-        );
-        const data_ott = await response_ott.json();
-        setWifiPlans(data_wifi);
-        setOttPlans(data_ott);
-
-        if (!response_wifi.ok || !response_ott.ok) {
-          throw new Error("Network response was not ok");
-        }
-      } catch (error) {
-        console.error("Failed to fetch plans:", error);
-        if (!cachedWifiPlans) setWifiPlans([]);
-        if (!cachedOttPlans) setOttPlans([]);
-      }
-    };
-
-    fetchPlans();
-  }, []);
-  // console.log(id,"id in edit user");
+  }, [dispatch, user]);
   
-  useEffect(() => {
-    if (propUserData && id) {
-      // Fetch user data if not provided as props
-      const fetchUserData = async () => {
-        try {
-          let token = "";
-          if (user) {
-            token = user.token || "";
-          }
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_ROOT}/user-plan/${id}`,
-            {
-              headers: {
-                Authorization: token ? `Bearer ${token}` : "",
-              },
-            }
-          );
-          setUserData(response.data);
-        } catch (error) {
-          console.error("Failed to fetch user data:", error);
-          alert("Failed to load user data.");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchUserData();
-    } else {
-      setLoading(false);
-    }
-  }, [propUserData, id, user]);
 
   if (loading) {
     return (
@@ -161,45 +110,17 @@ const Edit_User = () => {
       validationSchema={EditUserSchema}
       enableReinitialize
       onSubmit={async (values, { setSubmitting }) => {
-        
         try {
-          let token = "";
-          if (user) {
-            token = user.token || "";
-          }
           const payload = { ...values };
           if (!payload.password) {
             delete payload.password; // Don't send empty password
           }
-          const response = await axios.put(
-            `${import.meta.env.VITE_API_ROOT}/user-plan/${id}`,
-            payload,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: token ? `Bearer ${token}` : "",
-              },
-            }
-          );
-           
-          if (response && response.data && response.data.success) {
-            alert(`User updated successfully! Username: ${values.username}`);
-          }else if(response && response.data.message === 'No changes detected. Update not performed.'){
-              alert('No changes detected. Update not performed.');
-               
-          } else {
-            alert(`User updated, but no confirmation from server.,${response.data}`);
-          }
+          await dispatch(updateUser({ id, data: payload })).unwrap();
+          alert(`User updated successfully! Username: ${values.username}`);
           navigate("/user");
         } catch (error) {
           let msg = "An error occurred.";
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            msg = error.response.data.error;
-          } else if (error.message) {
+          if (error.message) {
             msg = error.message;
           }
           alert(`Failed to update user: ${msg}`);
@@ -212,6 +133,7 @@ const Edit_User = () => {
         return (
           <Form className="edit-user-form">
             <h2 className="edit-user-title">Edit User</h2>
+            {error && <div className="form-error">{error}</div>}
             {isSubmitting ? (
               <div className="loading-container">
                 <LoadingIcon />
@@ -265,7 +187,7 @@ const Edit_User = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="nickname">Nickname</label>
+                    <label htmlFor="nicename">Nickname</label>
                     <Field name="nicename" className="form-input" />
                     <ErrorMessage
                       name="nicename"

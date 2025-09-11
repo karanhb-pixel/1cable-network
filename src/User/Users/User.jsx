@@ -1,20 +1,26 @@
 import "./user.css";
 import UserAuth from "../UserAuth/UserAuth";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import LoadingIcon from "../../component/Loading_icon";
-import { useUser } from "../../utils/useUser";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser, logout } from "../../store/authSlice";
+import { selectAllUsers, selectLoading as selectUsersLoading, selectError as selectUsersError, fetchUsers } from "../../store/usersSlice";
 import { useNavigate } from "react-router-dom";
 import Add_User from "../Add_User/Add_User";
 
 const User = () => {
-  const { user, setUser } = useUser();
-  const [allUsers, setAllUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const allUsers = useSelector(selectAllUsers);
+  const loading = useSelector(selectUsersLoading);
+  const error = useSelector(selectUsersError);
   const navigate = useNavigate();
   const admin_code = () => {
     if (loading) return <LoadingIcon />;
+    if (error) return <div>Error loading users: {error}</div>;
 
+    
+    
     return (
       <div className="admin-users-table">
         <div className="admin-user-table-head">
@@ -57,7 +63,7 @@ const User = () => {
         </table>
         <button
           className="logout-btn user-logout-btn"
-          onClick={() => setUser(null)}
+          onClick={() => dispatch(logout())}
         >
           Logout
         </button>
@@ -67,6 +73,7 @@ const User = () => {
 
   const user_code = () => {
     if (loading) return <LoadingIcon />;
+    if (error) return <div>Error loading user details: {error}</div>;
     const details = allUsers[0];
     if (!details) return <div>No user details found.</div>;
     return (
@@ -102,7 +109,7 @@ const User = () => {
         </table>
         <button
           className="logout-btn user-logout-btn"
-          onClick={() => setUser(null)}
+          onClick={() => dispatch(logout())}
         >
           Logout
         </button>
@@ -112,22 +119,15 @@ const User = () => {
 
   useEffect(() => {
     if (user) {
-      setLoading(true);
-      axios
-        .get(`${import.meta.env.VITE_API_ROOT}/user-plans`, {
-          headers: user.token ? { Authorization: `Bearer ${user.token}` } : {},
-        })
-        .then((res) => setAllUsers(res.data))
-        .catch(() => setAllUsers([]))
-        .finally(() => setLoading(false));
+      dispatch(fetchUsers());
     }
-  }, [user]);
+  }, [dispatch, user]);
 
   return (
     <div className="user-page">
       {!user ? (
-        <UserAuth onAuthSuccess={setUser} />
-      ) : user.isAdmin ? (
+        <UserAuth  />
+      ) : user.user_role === "administrator" ? (
         admin_code()
       ) : (
         user_code()

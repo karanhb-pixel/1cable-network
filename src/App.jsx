@@ -1,6 +1,8 @@
 
 import {Routes, Route } from 'react-router-dom';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, selectUser } from './store/authSlice';
 import User from './User/Users/User';
 import Home from './component/Home';
 import Navbar from './component/Navbar/navbar';
@@ -9,13 +11,25 @@ import Add_User from './User/Add_User/Add_User';
 import './App.css';
 import { Add_Wifi_plans } from './component/Wifi_plan/Add_Wifi_plans/Add_Wifi_plans';
 import { Show_Wifi_plans_2 } from './component/Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2';
-import { UserProvider } from './utils/UserContext';
 
 import { Ott_plan } from './component/Ott_plan/Ott_plan';
 import Edit_User from './User/Edit_User/Edit_User';
 import { Delete_User } from './User/Delete_User/Delete_User';
 function AppContent() {
-  
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('user');
+    if (stored && !user) {
+      try {
+        dispatch(setUser(JSON.parse(stored)));
+      } catch (error) {
+        console.error("Failed to parse user from sessionStorage:", error);
+        sessionStorage.removeItem('user');
+      }
+    }
+  }, [dispatch, user]);
 
   return (
     <>
@@ -36,11 +50,7 @@ function AppContent() {
 }
 
 function App() {
-  return (
-    <UserProvider>
-      <AppContent />
-    </UserProvider>
-  );
+  return <AppContent />;
 }
 
 
