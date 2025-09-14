@@ -5,9 +5,9 @@ import * as Yup from "yup";
 import "./add_User.css";
 import LoadingIcon from "../../component/Loading_icon";
 import { useSelector, useDispatch } from "react-redux";
-import { selectUser } from "../../store/authSlice";
-import { selectWifiPlans, selectOttPlans, fetchWifiPlans, fetchOttPlans } from "../../store/plansSlice";
-import { selectError as selectUsersError, addUser } from "../../store/usersSlice";
+// import { selectUser } from "../../store/authSlice";
+import { fetchWifiPlans, fetchOttPlans } from "../../store/plansSlice";
+import { addUser } from "../../store/usersSlice";
 
 const AddUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -15,7 +15,7 @@ const AddUserSchema = Yup.object().shape({
   first_name: Yup.string(),
   last_name: Yup.string(),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  nickname: Yup.string(),
+  nicename: Yup.string(),
   roles: Yup.string().required("Role is required"),
   password: Yup.string()
     .min(4, "Password too short")
@@ -27,12 +27,12 @@ const AddUserSchema = Yup.object().shape({
 });
 
 const Add_User = () => {
-  const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const wifiPlans = useSelector(selectWifiPlans);
-  const ottPlans = useSelector(selectOttPlans);
-  const error = useSelector(selectUsersError);
+  const wifiPlans = useSelector((state) => state.plans.wifiPlans);
+  const ottPlans = useSelector((state) => state.plans.ottPlans);
+  const { error } = useSelector((state) => state.users);
   
   useEffect(() => {
     dispatch(fetchWifiPlans());
@@ -47,7 +47,7 @@ const Add_User = () => {
         first_name: "",
         last_name: "",
         email: "",
-        nickname: "",
+        nicename: "",
         roles: "",
         password: "",
         wifi_plan: "",
@@ -131,10 +131,10 @@ const Add_User = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="nickname">Nickname</label>
-                    <Field name="nickname" className="form-input" />
+                    <label htmlFor="nicename">Nickname</label>
+                    <Field name="nicename" className="form-input" />
                     <ErrorMessage
-                      name="nickname"
+                      name="nicename"
                       component="div"
                       className="form-error"
                     />

@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/authSlice";
 import { useUser } from "../../utils/useUser";
 import "./navbar.css";
 
 function Navbar() {
-  const { user, setUser } = useUser() || {};
+  const dispatch = useDispatch();
+  const user = useUser();
+  const isAdmin = user?.roles?.includes('administrator') || false;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
 
@@ -18,6 +22,7 @@ function Navbar() {
       dropdownTimeout.current = setTimeout(() => setDropdownOpen(false), 200);
     }
   };
+  
 
   return (
     <>
@@ -40,7 +45,7 @@ function Navbar() {
           </Link>
           {/* <!-- Navigation --> */}
           <nav className="nav-links">
-            {!user?.isAdmin ? (
+            {!isAdmin ? (
               <>
                 <div
                   className="nav-dropdown"
@@ -107,7 +112,7 @@ function Navbar() {
                   />
                   <span className="nav-user-name">{user.user_nicename}</span>
                 </Link>
-                <button onClick={() => setUser(null)} className="nav-logout-btn">
+                <button onClick={() => dispatch(setUser(null))} className="nav-logout-btn">
                   Logout
                 </button>
               </div>

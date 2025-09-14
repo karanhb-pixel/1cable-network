@@ -1,21 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import PlanCard from "../../PlanCard/PlanCard";
 import EditForm from "../../EditCard/EditCard";
 import { formatPrice } from "../../../utils/currencyFormatter";
 import { useUser } from "../../../utils/useUser";
 import LoadingIcon from "../../Loading_icon";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWifiPlans, selectWifiPlans, selectPlansLoading } from "../../../store/plansSlice";
 
 export const Show_Wifi_plans_2 = () => {
   const { user } = useUser() || {};
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
 
+  const dispatch = useDispatch();
+  const rawPlans = useSelector(selectWifiPlans);
+  const loading = useSelector(selectPlansLoading);
+  const formattedPlans = useMemo(() => rawPlans.map((plan) => ({
+    plan_id: plan.plan_id,
+    speed: Number(plan.speed),
+    color: plan.color,
+    prices: [
+      {
+        duration: "6 Month",
+        price: formatPrice(plan["6_month"]),
+      },
+      {
+        duration: "12 Month",
+        price: formatPrice(plan["12_month"]),
+      },
+    ],
+  })), [rawPlans]);
+
   useEffect(() => {
-    fetchPlans();
-  }, []);
+    dispatch(fetchWifiPlans());
+  }, [dispatch]);
 
   useEffect(() => {
     const newIsAdmin = user?.isAdmin || false;
@@ -24,44 +43,6 @@ export const Show_Wifi_plans_2 = () => {
 
   useEffect(() => {}, [isEditing]);
   
-  // Fetch WiFi plans with caching
-  const fetchPlans = async () => {
-    // console.log("Starting to fetch WiFi plans...");
-    setLoading(true);
-
-    // 1. Check if cached data exists
-    const cachedPlans = sessionStorage.getItem("wifi_plans");
-    if (cachedPlans) {
-      setPlans(JSON.parse(cachedPlans));
-      // console.log("Using cached WiFi plans.");
-    }
-
-    try {
-      // 2. Fetch the latest plans from the server
-      const response_2 = await fetch(
-        `${import.meta.env.VITE_API_ROOT}/wifi-plans`
-      );
-      if (!response_2.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data_2 = await response_2.json();
-      const newPlans = formattedData_2(data_2);
-
-      // 3. Update the state with the fresh data and cache it
-      setPlans(newPlans);
-      sessionStorage.setItem("wifi_plans", JSON.stringify(newPlans));
-      // setIsAdmin(true);
-      // console.log("New WiFi plans fetched and cached successfully.");
-    } catch (error) {
-      console.error("Failed to fetch plans:", error);
-      // If fetch fails and there's no cached data, display a message
-      if (!cachedPlans) {
-        setPlans([]);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle admin plan click
   const handleAdminPlanClick = (plan) => {
@@ -73,20 +54,6 @@ export const Show_Wifi_plans_2 = () => {
   // Handle saving edited plan (mock implementation)
   const handleSavePlan = async (updatedPlan) => {
     console.log("Saving updated plan:", updatedPlan);
-
-    const updatedPlans = plans.map((plan) =>
-      plan.speed === updatedPlan.speed ? updatedPlan : plan
-    );
-
-   
-    // You need to re-format the price for display after saving
-    const reFormattedPlans = updatedPlans.map((plan) => ({
-      ...plan,
-      prices: plan.prices.map((priceItem) => ({
-        ...priceItem,
-        price: formatPrice(priceItem.price),
-      })),
-    }));
 
     const planToSave = revertFormattedData([updatedPlan]);
     console.log("Plan to save to server:", planToSave);
@@ -105,7 +72,7 @@ export const Show_Wifi_plans_2 = () => {
       }
       const result = await res.json();
       console.log("Update result:", result);
-      setPlans(reFormattedPlans);
+      dispatch(fetchWifiPlans());
     } catch (error) {
       console.error("Error saving Plan:", error);
       alert("Error saving Plan:", error);
@@ -146,7 +113,7 @@ export const Show_Wifi_plans_2 = () => {
       <section id="plans" className="plans-section">
         <h2 className="plans-title">HIGH SPEED UNLIMITED PLANS</h2>
         <div className="plans-grid">
-          {plans.map((plan) => {
+          {formattedPlans.map((plan) => {
             if (plan.plan_id === "0") { return null; }
             return (
             <PlanCard
@@ -169,24 +136,8 @@ export const Show_Wifi_plans_2 = () => {
   );
 };
 
-function formattedData_2(data) {
-  return data.map((plan) => ({
-    plan_id: plan.plan_id,
-    speed: Number(plan.speed),
-    color: plan.color,
-    prices: [
-      {
-        duration: "6 Month",
-        price: plan["6_month"],
-      },
-      {
-        duration: "12 Month",
-        price: plan["12_month"],
-      },
-    ],
-  }));
-}
 // console.log(formattedData_2(data_2), " formattedData_2 from wifi plan 2");
+
 
 function revertFormattedData(formattedData) {
   return formattedData.map((plan, index) => {

@@ -3,13 +3,14 @@ import UserAuth from "../UserAuth/UserAuth";
 import { useEffect } from "react";
 import LoadingIcon from "../../component/Loading_icon";
 import { useSelector, useDispatch } from "react-redux";
-import { selectUser, logout } from "../../store/authSlice";
+import { logout } from "../../store/authSlice";
 import { selectAllUsers, selectLoading as selectUsersLoading, selectError as selectUsersError, fetchUsers } from "../../store/usersSlice";
 import { useNavigate } from "react-router-dom";
 import Add_User from "../Add_User/Add_User";
+import { useUser } from "../../utils/useUser";
 
 const User = () => {
-  const user = useSelector(selectUser);
+  const user = useUser();
   const dispatch = useDispatch();
   const allUsers = useSelector(selectAllUsers);
   const loading = useSelector(selectUsersLoading);
@@ -19,8 +20,6 @@ const User = () => {
     if (loading) return <LoadingIcon />;
     if (error) return <div>Error loading users: {error}</div>;
 
-    
-    
     return (
       <div className="admin-users-table">
         <div className="admin-user-table-head">
@@ -119,6 +118,8 @@ const User = () => {
 
   useEffect(() => {
     if (user) {
+      // console.log("user in Users: ",user);
+      
       dispatch(fetchUsers());
     }
   }, [dispatch, user]);

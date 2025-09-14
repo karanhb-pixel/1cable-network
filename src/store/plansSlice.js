@@ -5,15 +5,9 @@ const API_ROOT = import.meta.env.VITE_API_ROOT;
 
 export const fetchWifiPlans = createAsyncThunk(
   'plans/fetchWifiPlans',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      const token = auth.user?.token;
-      const response = await axios.get(`${API_ROOT}/wifi-plans`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${API_ROOT}/wifi-plans`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -23,15 +17,9 @@ export const fetchWifiPlans = createAsyncThunk(
 
 export const fetchOttPlans = createAsyncThunk(
   'plans/fetchOttPlans',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      const token = auth.user?.token;
-      const response = await axios.get(`${API_ROOT}/ott-plans`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${API_ROOT}/ott-plans`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_ROOT || 'http://localhost/wordpress/wp-json';
+const API_BASE = import.meta.env.VITE_API_ROOT ;
 
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers',

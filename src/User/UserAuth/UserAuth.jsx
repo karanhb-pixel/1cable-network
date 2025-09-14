@@ -2,9 +2,9 @@ import LoadingIcon from "../../component/Loading_icon";
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../store/authSlice';
 
 
@@ -17,32 +17,17 @@ const validationSchema = Yup.object({
 function UserAuth() {
   const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async (values, { setSubmitting }) => {
     setError('');
     try {
-      // Use correct env variable access for Vite
-      const endpoint = import.meta.env.VITE_API_AUTH_TOKEN;
-      const response = await axios.post(endpoint, {
-        username: values.email,
-        password: values.password
-      });
-      // You may want to check response.data for success
-      if (response.data && response.data.token) {
-        setError('');
-        dispatch(login(response.data));
-      } else {
-        setError('Invalid credentials.');
-      }
+      // console.log("login values : ", values);
+      
+      await dispatch(login({ username: values.email, password: values.password })).unwrap();
+      navigate('/user');
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        // console.log(response);
-        console.log(err);
-        
-        setError('Server error.');
-      }
+      setError(err?.message || 'Server error.');
     }
     setSubmitting(false);
   };

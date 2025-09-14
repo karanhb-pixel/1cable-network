@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import PlanCard from "../PlanCard/PlanCard";
 import { OttEditCard } from "../EditCard/OttEditCard";
 import { useUser } from "../../utils/useUser";
 import LoadingIcon from "../Loading_icon";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOttPlans, selectOttPlans, selectPlansLoading } from "../../store/plansSlice";
 export const Ott_plan = () => {
   {
     /* <!-- OTT Services Section --> */
   }
   const { user } = useUser() || {};
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
+
+  const dispatch = useDispatch();
+  const rawPlans = useSelector(selectOttPlans);
+  const loading = useSelector(selectPlansLoading);
+  const formattedPlans = useMemo(() => formatOttPlans_2(rawPlans), [rawPlans]);
 
   useEffect(() => {
     setIsAdmin(user?.isAdmin || false);
@@ -21,48 +26,9 @@ export const Ott_plan = () => {
   useEffect(() => {}, [isEditing]);
 
   useEffect(() => {
-    fetchedOttPlans();
-  }, []);
+    dispatch(fetchOttPlans());
+  }, [dispatch]);
 
-  const fetchedOttPlans = async () => {
-    // console.log("Starting to fetch OTT plans...");
-    setLoading(true);
-
-    // 1. Check for cached data in sessionStorage
-    const cachedPlans = sessionStorage.getItem("ott_plans");
-    if (cachedPlans) {
-      setPlans(JSON.parse(cachedPlans));
-      console.log("Using cached OTT plans.");
-    }
-
-    try {
-      //fetching latest data from server
-      const response_2 = await fetch(
-        `${import.meta.env.VITE_API_ROOT}/ott-plans`
-      );
-
-      if (!response_2.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data_2 = await response_2.json();
-      // Format prices for each plan
-
-      const reFormattedPlans = formatOttPlans_2(data_2);
-      // console.log(reFormattedPlans, "reFormattedData from ott plan");
-      setPlans(reFormattedPlans);
-      sessionStorage.setItem("ott_plans", JSON.stringify(reFormattedPlans));
-      // console.log("New OTT plans fetched and cached successfully.");
-    } catch (error) {
-      console.error("Failed to fetch plans:", error);
-      if (!cachedPlans) {
-        setPlans([]);
-      }
-    } finally {
-      setLoading(false);
-      console.log("Fetch operation completed.");
-    }
-  };
 
   const handleAdminPlanClick = (plan) => {
     setEditingPlan(plan);
@@ -70,10 +36,6 @@ export const Ott_plan = () => {
   };
 
   const handleSavePlan = async (updatedPlan) => {
-    const updatedPlans = plans.map((plan) =>
-      plan.duration === updatedPlan.duration ? updatedPlan : plan
-    );
-
     const serverData = revertOttPlans(updatedPlan);
 
     // Send update to server
@@ -94,7 +56,7 @@ export const Ott_plan = () => {
       }
       const result = await response.json();
       console.log("Update result:", result);
-      setPlans(updatedPlans);
+      dispatch(fetchOttPlans());
     } catch (error) {
       console.error("Error updating plan:", error);
     }
@@ -133,7 +95,7 @@ export const Ott_plan = () => {
       <h2 className="plans-title">TV - 300 channels</h2>
       <p className="plans-subtitle">280 SD channel + 20 HD channel</p>
       <div className="plans-grid">
-        {plans.map((plan, index) =>{ 
+        {formattedPlans.map((plan, index) =>{
         if (plan.plan_id === "0") { return null; }
         return(
           <PlanCard
