@@ -6,8 +6,19 @@ import "./Edit_User.css";
 import LoadingIcon from "../../component/Loading_icon";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../../store/authSlice";
-import { selectAllUsers, selectLoading as selectUsersLoading, selectError as selectUsersError, fetchUsers, updateUser } from "../../store/usersSlice";
-import { selectWifiPlans, selectOttPlans, fetchWifiPlans, fetchOttPlans } from "../../store/plansSlice";
+import {
+  selectCurrentUser,
+  selectLoading as selectUsersLoading,
+  selectError as selectUsersError,
+  fetchUserById,
+  updateUser,
+} from "../../store/usersSlice";
+import {
+  selectWifiPlans,
+  selectOttPlans,
+  fetchWifiPlans,
+  fetchOttPlans,
+} from "../../store/plansSlice";
 
 const EditUserSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -31,15 +42,25 @@ const Edit_User = () => {
   const { id } = useParams(); // Assuming route is /edit-user/:id
   const location = useLocation();
   const propUserData = location.state?.userData;
-  const allUsers = useSelector(selectAllUsers);
+  const currentUser = useSelector(selectCurrentUser);
   const loading = useSelector(selectUsersLoading);
   const error = useSelector(selectUsersError);
   const wifiPlans = useSelector(selectWifiPlans);
   const ottPlans = useSelector(selectOttPlans);
+
   const userData = useMemo(() => {
-    if (propUserData) return propUserData;
-    return allUsers.find(u => u.plan_id === id);
-  }, [allUsers, propUserData, id]);
+    // Check if the API data has loaded and if it's an array with at least one item.
+    if (currentUser && Array.isArray(currentUser) && currentUser.length > 0) {
+      // If API data exists, always use it.
+      return currentUser[0];
+    }
+    // If the API data is not ready yet, but a prop was passed, use the prop data.
+    if (propUserData) {
+      return propUserData;
+    }
+    // Otherwise, return null or undefined until data is available.
+    return null;
+  }, [currentUser, propUserData]);
 
   useEffect(() => {
     dispatch(fetchWifiPlans());
@@ -48,10 +69,9 @@ const Edit_User = () => {
 
   useEffect(() => {
     if (user) {
-      dispatch(fetchUsers());
+      dispatch(fetchUserById(id));
     }
-  }, [dispatch, user]);
-  
+  }, [dispatch, user, id]);
 
   if (loading) {
     return (
@@ -64,45 +84,50 @@ const Edit_User = () => {
   if (!userData) {
     return <div>User data not found.</div>;
   }
-  // console.log("userData before setting wifi_plan:", userData);
+
+  const mutableUserData = { ...userData };
+  // console.log("userData before setting wifi_plan:", mutableUserData);
 
   const selectedwifiPlan = wifiPlans.find(
     (plan) => plan.speed === userData.wifi_speed
   );
 
   if (selectedwifiPlan) {
-    userData.wifi_plan = selectedwifiPlan.plan_id;
+    mutableUserData.wifi_plan = selectedwifiPlan.plan_id;
+  } else {
+    mutableUserData.wifi_plan = "0";
   }
-  // console.log("userData after setting wifi_plan:", userData);
+  // console.log("userData after setting wifi_plan:", mutableUserData);
 
   const selectedOttPlan = ottPlans.find(
     (plan) => plan.duration === userData.ott_duration
   );
   if (selectedOttPlan) {
-    userData.ott_plan = selectedOttPlan.plan_id;
+    mutableUserData.ott_plan = selectedOttPlan.plan_id;
+  } else {
+    mutableUserData.ott_plan = "0";
   }
-  // console.log("userData after setting ott_plan:", userData);
-
+  // console.log("userData after setting ott_plan:", mutableUserData);
 
   const initialValues = {
-    username: userData.username || "",
-    name: userData.display_name || "",
-    first_name: userData.first_name || "",
-    last_name: userData.last_name || "",
-    email: userData.email || "",
-    nicename: userData.nicename || "",
-    roles: userData.roles || "",
+    username: mutableUserData.username || "",
+    name: mutableUserData.display_name || "",
+    first_name: mutableUserData.first_name || "",
+    last_name: mutableUserData.last_name || "",
+    email: mutableUserData.email || "",
+    nicename: mutableUserData.nicename || "",
+    roles: mutableUserData.roles || "",
     password: "", // Leave empty for editing
-    wifi_plan: userData.wifi_plan || "",
-    ott_plan: userData.ott_plan || "",
-    start_date: userData.start_date
-      ? new Date(userData.start_date).toISOString().split("T")[0]
+    wifi_plan: mutableUserData.wifi_plan || "",
+    ott_plan: mutableUserData.ott_plan || "",
+    start_date: mutableUserData.start_date
+      ? new Date(mutableUserData.start_date).toISOString().split("T")[0]
       : "",
-    end_date: userData.end_date
-      ? new Date(userData.end_date).toISOString().split("T")[0]
+    end_date: mutableUserData.end_date
+      ? new Date(mutableUserData.end_date).toISOString().split("T")[0]
       : "",
   };
-  console.log("Initial Values:", initialValues);
+  // console.log("Final initialValues for Formik:", initialValues);
 
   return (
     <Formik
@@ -115,15 +140,23 @@ const Edit_User = () => {
           if (!payload.password) {
             delete payload.password; // Don't send empty password
           }
-          await dispatch(updateUser({ id, data: payload })).unwrap();
+          // console.log("Submitting payload:", payload);
+          payload.plan_id = parseInt(id);
+          payload.user_id = mutableUserData.user_id;
+          console.log("payload in edit user: ", payload);
+
+          await dispatch(updateUser({ id, userData: payload })).unwrap();
           alert(`User updated successfully! Username: ${values.username}`);
           navigate("/user");
         } catch (error) {
-          let msg = "An error occurred.";
-          if (error.message) {
-            msg = error.message;
-          }
-          alert(`Failed to update user: ${msg}`);
+          // Extract a specific string message from the error
+          const errorMessage =
+            error.response?.data?.message ||
+            error.message ||
+            "An unknown error occurred.";
+
+          // Use a string in the alert
+          alert(`Failed to update user: ${errorMessage}`);
         }
         setSubmitting(false);
       }}

@@ -33,7 +33,7 @@ const Add_User = () => {
   const wifiPlans = useSelector((state) => state.plans.wifiPlans);
   const ottPlans = useSelector((state) => state.plans.ottPlans);
   const { error } = useSelector((state) => state.users);
-  
+
   useEffect(() => {
     dispatch(fetchWifiPlans());
     dispatch(fetchOttPlans());
@@ -63,11 +63,14 @@ const Add_User = () => {
           alert(`User created successfully! Username: ${values.username}`);
           navigate("/user");
         } catch (error) {
-          let msg = "An error occurred.";
-          if (error.message) {
-            msg = error.message;
-          }
-          alert(`Failed to create user: ${msg}`);
+          // Extract a specific string message from the error
+          const errorMessage =
+            error.response?.data?.message ||
+            error.message ||
+            "An unknown error occurred.";
+
+          // Use a string in the alert
+          alert(`Failed to Add user: ${errorMessage}`);
         }
         setSubmitting(false);
       }}
@@ -178,12 +181,19 @@ const Add_User = () => {
                       <option value="" disabled>
                         Select Wifi Plan
                       </option>
-                      {wifiPlans.length > 0 ? (
-                        wifiPlans.map((plan)=>{
-                          if (plan.plan_id === "0") { return null; }
-                          return <option value={plan.plan_id} key={plan.plan_id}>{plan.speed} Mbps</option>
-                      })): null}
-                      
+                      {wifiPlans.length > 0
+                        ? wifiPlans.map((plan) => {
+                            if (plan.plan_id === "0") {
+                              return null;
+                            }
+                            return (
+                              <option value={plan.plan_id} key={plan.plan_id}>
+                                {plan.speed} Mbps
+                              </option>
+                            );
+                          })
+                        : null}
+
                       <option value="0">None</option>
                     </Field>
                   </div>
@@ -198,12 +208,19 @@ const Add_User = () => {
                       <option value="" disabled>
                         Select OTT Plan
                       </option>
-                      {ottPlans.length > 0 ? (
-                        ottPlans.map((plan)=>{
-                          if (plan.plan_id === "0") { return null; }
-                          return <option value={plan.plan_id} key={plan.plan_id}>{plan.duration}</option>
-                      })): null}
-                     
+                      {ottPlans.length > 0
+                        ? ottPlans.map((plan) => {
+                            if (plan.plan_id === "0") {
+                              return null;
+                            }
+                            return (
+                              <option value={plan.plan_id} key={plan.plan_id}>
+                                {plan.duration}
+                              </option>
+                            );
+                          })
+                        : null}
+
                       <option value="0">None</option>
                     </Field>
                   </div>
