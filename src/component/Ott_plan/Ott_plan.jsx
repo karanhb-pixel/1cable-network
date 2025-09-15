@@ -9,7 +9,7 @@ export const Ott_plan = () => {
   {
     /* <!-- OTT Services Section --> */
   }
-  const { user } = useUser() || {};
+  const user = useUser();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
@@ -20,7 +20,7 @@ export const Ott_plan = () => {
   const formattedPlans = useMemo(() => formatOttPlans_2(rawPlans), [rawPlans]);
 
   useEffect(() => {
-    setIsAdmin(user?.isAdmin || false);
+    setIsAdmin(user?.user_role.includes('administrator') || false);
   }, [user]);
 
   useEffect(() => {}, [isEditing]);

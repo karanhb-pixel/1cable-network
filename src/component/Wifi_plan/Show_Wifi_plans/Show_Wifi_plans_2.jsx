@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWifiPlans, selectWifiPlans, selectPlansLoading } from "../../../store/plansSlice";
 
 export const Show_Wifi_plans_2 = () => {
-  const { user } = useUser() || {};
+  const  user  = useUser() ;
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
@@ -37,8 +37,11 @@ export const Show_Wifi_plans_2 = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const newIsAdmin = user?.isAdmin || false;
+    const newIsAdmin = user?.user_role.includes('administrator') || false;
     setIsAdmin(newIsAdmin);
+    // console.log('isAdmin set to:', newIsAdmin);
+    // console.log('user in Show_Wifi_plans_2:', user);
+    
   }, [user]);
 
   useEffect(() => {}, [isEditing]);

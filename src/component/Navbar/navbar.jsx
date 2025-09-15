@@ -8,10 +8,13 @@ import "./navbar.css";
 function Navbar() {
   const dispatch = useDispatch();
   const user = useUser();
-  const isAdmin = user?.roles?.includes('administrator') || false;
+  const isAdmin = user?.user_role?.includes('administrator') || false;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
 
+  // console.log("user in navbar:", user);
+  // console.log("isAdmin in navbar:", isAdmin);
+  
   
   
   const handleDropdown = (open) => {
