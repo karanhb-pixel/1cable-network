@@ -22,18 +22,21 @@ export const fetchUsers = createAsyncThunk(
 
 export const fetchUserById = createAsyncThunk(
   'users/fetchUserById',
-  async (planId, { getState, rejectWithValue }) => {
+  async (userId, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.user.token;
-      const response = await axios.get(`${API_BASE}/iws/v1/users?plan_id=${planId}`, {
+      // Change the URL to include the user_id as a query parameter
+      const response = await axios.get(`${API_BASE}/iws/v1/users?user_id=${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // The API now returns an array, so return it as-is.
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
 
 export const addUser = createAsyncThunk(
   'users/addUser',
@@ -55,9 +58,10 @@ export const updateUser = createAsyncThunk(
   async ({ id, userData }, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.user.token;
-      // console.log("Updating user with ID:", id, "and data:", userData);
       
-      const response = await axios.put(`${API_BASE}/iws/v1/users?id=${id}`, userData, {
+      // Update the URL to include the user ID as a path parameter.
+      // This matches the new PUT endpoint: `/users/(?P<id>\d+)`
+      const response = await axios.put(`${API_BASE}/iws/v1/users/${id}`, userData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -67,23 +71,28 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+
 export const deleteUser = createAsyncThunk(
   'users/deleteUser',
-  async ({id,userData}, { getState, rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
       console.log("Deleting user with ID:", id);
       
       const token = getState().auth.user.token;
-      await axios.delete(`${API_BASE}/iws/v1/users?id=${id}`, {
+      
+      // Update the URL to include the user ID as a path parameter.
+      await axios.delete(`${API_BASE}/iws/v1/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
-        data: userData, // Include userData in the request body
       });
+      
+      // Return the ID of the deleted user for state management
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
 
 const initialState = {
   allUsers: [],

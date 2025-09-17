@@ -28,7 +28,7 @@ const EditUserSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   nicename: Yup.string(),
   roles: Yup.string().required("Role is required"),
-  password: Yup.string().min(4, "Password too short"), // Optional for editing
+  password: Yup.string().min(4, "Password too short"),
   wifi_plan: Yup.string(),
   ott_plan: Yup.string(),
   start_date: Yup.date().nullable(),
@@ -39,7 +39,7 @@ const Edit_User = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams(); // Assuming route is /edit-user/:id
+  const { id } = useParams();
   const location = useLocation();
   const propUserData = location.state?.userData;
   const currentUser = useSelector(selectCurrentUser);
@@ -49,16 +49,12 @@ const Edit_User = () => {
   const ottPlans = useSelector(selectOttPlans);
 
   const userData = useMemo(() => {
-    // Check if the API data has loaded and if it's an array with at least one item.
     if (currentUser && Array.isArray(currentUser) && currentUser.length > 0) {
-      // If API data exists, always use it.
       return currentUser[0];
     }
-    // If the API data is not ready yet, but a prop was passed, use the prop data.
     if (propUserData) {
       return propUserData;
     }
-    // Otherwise, return null or undefined until data is available.
     return null;
   }, [currentUser, propUserData]);
 
@@ -68,7 +64,7 @@ const Edit_User = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user) {
+    if (user && id) {
       dispatch(fetchUserById(id));
     }
   }, [dispatch, user, id]);
@@ -85,49 +81,24 @@ const Edit_User = () => {
     return <div>User data not found.</div>;
   }
 
-  const mutableUserData = { ...userData };
-  // console.log("userData before setting wifi_plan:", mutableUserData);
-
-  const selectedwifiPlan = wifiPlans.find(
-    (plan) => plan.speed === userData.wifi_speed
-  );
-
-  if (selectedwifiPlan) {
-    mutableUserData.wifi_plan = selectedwifiPlan.plan_id;
-  } else {
-    mutableUserData.wifi_plan = "0";
-  }
-  // console.log("userData after setting wifi_plan:", mutableUserData);
-
-  const selectedOttPlan = ottPlans.find(
-    (plan) => plan.duration === userData.ott_duration
-  );
-  if (selectedOttPlan) {
-    mutableUserData.ott_plan = selectedOttPlan.plan_id;
-  } else {
-    mutableUserData.ott_plan = "0";
-  }
-  // console.log("userData after setting ott_plan:", mutableUserData);
-
   const initialValues = {
-    username: mutableUserData.username || "",
-    name: mutableUserData.display_name || "",
-    first_name: mutableUserData.first_name || "",
-    last_name: mutableUserData.last_name || "",
-    email: mutableUserData.email || "",
-    nicename: mutableUserData.nicename || "",
-    roles: mutableUserData.roles || "",
+    username: userData.username || "",
+    name: userData.display_name || "",
+    first_name: userData.first_name || "",
+    last_name: userData.last_name || "",
+    email: userData.email || "",
+    nicename: userData.nicename || "",
+    roles: userData.roles ? userData.roles : "", // Use the first role
     password: "", // Leave empty for editing
-    wifi_plan: mutableUserData.wifi_plan || "",
-    ott_plan: mutableUserData.ott_plan || "",
-    start_date: mutableUserData.start_date
-      ? new Date(mutableUserData.start_date).toISOString().split("T")[0]
+    wifi_plan: userData.wifi_plan || "",
+    ott_plan: userData.ott_plan || "",
+    start_date: userData.start_date
+      ? new Date(userData.start_date).toISOString().split("T")[0]
       : "",
-    end_date: mutableUserData.end_date
-      ? new Date(mutableUserData.end_date).toISOString().split("T")[0]
+    end_date: userData.end_date
+      ? new Date(userData.end_date).toISOString().split("T")[0]
       : "",
   };
-  // console.log("Final initialValues for Formik:", initialValues);
 
   return (
     <Formik
@@ -138,24 +109,17 @@ const Edit_User = () => {
         try {
           const payload = { ...values };
           if (!payload.password) {
-            delete payload.password; // Don't send empty password
+            delete payload.password;
           }
-          // console.log("Submitting payload:", payload);
-          payload.plan_id = parseInt(id);
-          payload.user_id = mutableUserData.user_id;
-          console.log("payload in edit user: ", payload);
-
+          // The REST API endpoint now expects the user ID in the URL.
           await dispatch(updateUser({ id, userData: payload })).unwrap();
           alert(`User updated successfully! Username: ${values.username}`);
           navigate("/user");
         } catch (error) {
-          // Extract a specific string message from the error
           const errorMessage =
             error.response?.data?.message ||
             error.message ||
             "An unknown error occurred.";
-
-          // Use a string in the alert
           alert(`Failed to update user: ${errorMessage}`);
         }
         setSubmitting(false);
@@ -230,12 +194,14 @@ const Edit_User = () => {
                   </div>
                   <div className="form-group">
                     <label htmlFor="roles">Role</label>
-                    <Field as="select" name="roles" className="form-input">
-                      <option value="" disabled>
-                        Select Role
-                      </option>
+                    <Field
+                      name="roles"
+                      as="select"
+                      className="form-input"
+                      disabled={user && user.roles && user.roles.includes("subscriber")}
+                    >
+                      <option value="subscriber">Subscriber</option>
                       <option value="administrator">Administrator</option>
-                      <option value="subscriber">User</option>
                     </Field>
                     <ErrorMessage
                       name="roles"
@@ -244,9 +210,7 @@ const Edit_User = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="password">
-                      Password (leave empty to keep current)
-                    </label>
+                    <label htmlFor="password">Password</label>
                     <Field
                       name="password"
                       type="password"
@@ -260,52 +224,45 @@ const Edit_User = () => {
                   </div>
                   <div className="form-group">
                     <label htmlFor="wifi_plan">Wifi Plan</label>
-
                     <Field
-                      as="select"
                       name="wifi_plan"
+                      as="select"
                       className="form-input"
                       disabled={disablePlanFields}
                     >
-                      <option value="" disabled>
-                        Select Wifi Plan
-                      </option>
-                      {wifiPlans.length > 0
-                        ? wifiPlans.map((plan) => {
-                            if (plan.plan_id === "0") return null;
-                            return (
-                              <option value={plan.plan_id} key={plan.plan_id}>
-                                {plan.speed} Mbps
-                              </option>
-                            );
-                          })
-                        : null}
-                      <option value="0">None</option>
+                      <option value="">Select a plan</option>
+                      {wifiPlans.map((plan) => (
+                        <option key={plan.plan_id} value={plan.plan_id}>
+                          {plan.speed} Mbps
+                        </option>
+                      ))}
                     </Field>
+                    <ErrorMessage
+                      name="wifi_plan"
+                      component="div"
+                      className="form-error"
+                    />
                   </div>
                   <div className="form-group">
                     <label htmlFor="ott_plan">OTT Plan</label>
                     <Field
-                      as="select"
                       name="ott_plan"
+                      as="select"
                       className="form-input"
                       disabled={disablePlanFields}
                     >
-                      <option value="" disabled>
-                        Select OTT Plan
-                      </option>
-                      {ottPlans.length > 0
-                        ? ottPlans.map((plan) => {
-                            if (plan.plan_id === "0") return null;
-                            return (
-                              <option value={plan.plan_id} key={plan.plan_id}>
-                                {plan.duration}
-                              </option>
-                            );
-                          })
-                        : null}
-                      <option value="0">None</option>
+                      <option value="">Select a plan</option>
+                      {ottPlans.map((plan) => (
+                        <option key={plan.plan_id} value={plan.plan_id}>
+                          {plan.duration}
+                        </option>
+                      ))}
                     </Field>
+                    <ErrorMessage
+                      name="ott_plan"
+                      component="div"
+                      className="form-error"
+                    />
                   </div>
                   <div className="form-group">
                     <label htmlFor="start_date">Start Date</label>
@@ -314,6 +271,11 @@ const Edit_User = () => {
                       type="date"
                       className="form-input"
                       disabled={disablePlanFields}
+                    />
+                    <ErrorMessage
+                      name="start_date"
+                      component="div"
+                      className="form-error"
                     />
                   </div>
                   <div className="form-group">
@@ -324,24 +286,20 @@ const Edit_User = () => {
                       className="form-input"
                       disabled={disablePlanFields}
                     />
+                    <ErrorMessage
+                      name="end_date"
+                      component="div"
+                      className="form-error"
+                    />
                   </div>
                 </div>
-                <div className="button-group">
-                  <button
-                    type="submit"
-                    className="edit-user-btn"
-                    disabled={isSubmitting}
-                  >
-                    Update User
-                  </button>
-                  <button
-                    type="button"
-                    className="cancel-btn"
-                    onClick={() => navigate("/user")}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="edit-user-btn"
+                >
+                  {isSubmitting ? "Updating..." : "Update User"}
+                </button>
               </>
             )}
           </Form>

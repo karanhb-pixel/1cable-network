@@ -51,10 +51,10 @@ const User = () => {
                 <td>{u.start_date || "-"}</td>
                 <td>{u.end_date || "-"}</td>
                 <td>
-                  <button className="edit_user_btn" onClick={()=>navigate(`/edit-user/${u.plan_id}`, { state: { userData: u } })}>Edit</button>
+                  <button className="edit_user_btn" onClick={()=>navigate(`/edit-user/${u.user_id}`, { state: { userData: u } })}>Edit</button>
                   </td>
                 <td>
-                  <button className="delete_user_btn" onClick={()=>navigate(`/delete-user/${u.plan_id}`,{state: {userData: u}})}>Delete</button>
+                  <button className="delete_user_btn" onClick={()=>navigate(`/delete-user/${u.user_id}`,{state: {userData: u}})}>Delete</button>
                   </td>
               </tr>
             ))}

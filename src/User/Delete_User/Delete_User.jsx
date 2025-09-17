@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import LoadingIcon from "../../component/Loading_icon";
 import "./delete_User.css";
@@ -9,7 +9,7 @@ import {
   selectError as selectDeleteError,
   deleteUser,
 } from "../../store/usersSlice";
-// import
+
 export const Delete_User = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -19,34 +19,27 @@ export const Delete_User = () => {
   const navigate = useNavigate();
   const loading = useSelector(selectDeleteLoading);
   const error = useSelector(selectDeleteError);
+  const [isDeleting, setIsDeleting] = useState(false); // New state for deletion
 
+  // Redirect after deletion, when loading is false and there's no error
   useEffect(() => {
-    if (user && id) {
-      dispatch(deleteUser({ id, userData }));
-    }
-  }, [dispatch, user, id, userData]);
-
-  useEffect(() => {
-    if (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "An unknown error occurred.";
-
-      // Use a string in the alert
-      alert(`Failed to Delete user: ${errorMessage}`);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (!loading && !error) {
+    if (isDeleting && !loading && !error) {
       navigate("/user");
     }
-  }, [loading, error, navigate]);
+  }, [isDeleting, loading, error, navigate]);
+
+  const handleDelete = () => {
+    if (user && id) {
+      // Trigger the deletion process
+      setIsDeleting(true);
+      dispatch(deleteUser(id));
+    }
+  };
 
   const userName = userData ? userData.username : "this user";
 
-  if (loading) {
+  // Display loading icon while deletion is in progress
+  if (isDeleting && loading) {
     return (
       <div className="delete_user_section">
         <LoadingIcon />
@@ -65,10 +58,7 @@ export const Delete_User = () => {
       </p>
       {error && <p className="error-message">{error}</p>}
       <div className="button-group">
-        <button
-          onClick={() => dispatch(deleteUser({ id, data: userData }))}
-          className="delete-button"
-        >
+        <button onClick={handleDelete} className="delete-button">
           Confirm Delete
         </button>
         <button onClick={() => navigate(-1)} className="cancel-btn">
