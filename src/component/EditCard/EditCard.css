@@ -91,3 +91,61 @@
   flex-direction: column;
   margin-bottom: 1rem;
 }
+
+/* Smartphone (max-width: 480px) */
+@media (max-width: 480px) {
+    .edit-form-container {
+        padding: 1rem;
+        min-height: 100vh;
+    }
+    .edit-form-card {
+        padding: 1.5rem;
+        margin: 1rem;
+        max-width: 100%;
+    }
+    .edit-form-title {
+        font-size: 1.5rem;
+    }
+    .form-input {
+        padding: 0.75rem;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .button {
+        width: 100%;
+        padding: 0.75rem;
+    }
+    .error-message {
+        font-size: 0.8rem;
+    }
+}
+
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .edit-form-container {
+        padding: 1.5rem;
+    }
+    .edit-form-card {
+        padding: 2rem;
+        max-width: 28rem;
+    }
+    .edit-form-title {
+        font-size: 1.75rem;
+    }
+    .button-group {
+        gap: 1rem;
+    }
+}
+
+/* Desktop (769px+) */
+@media (min-width: 769px) {
+    .edit-form-card {
+        max-width: 32rem;
+    }
+    .edit-form-title {
+        font-size: 1.875rem;
+    }
+}

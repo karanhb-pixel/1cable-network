@@ -73,10 +73,87 @@
     color: #6b7280;
     margin-top: 2rem;
 }
-@media (min-width: 768px) {
-  .plans-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* Smartphone (max-width: 480px) */
+@media (max-width: 480px) {
+    .plans-section {
+        padding: 1.5rem 0.5rem;
+    }
+    .plans-title {
+        font-size: 1.5rem;
+    }
+    .plans-subtitle {
+        font-size: 1.1rem;
+    }
+    .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .plan-card {
+        padding: 1rem;
+    }
+    .plan-title {
+        font-size: 1.25rem;
+    }
+    .plan-list li {
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    .plans-notes {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+    .plans-note {
+        font-size: 0.8rem;
+    }
+    .edit-note {
+        font-size: 0.7rem;
+        top: 0.25rem;
+        right: 0.25rem;
+    }
+}
+
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .plans-section {
+        padding: 2.5rem 1rem;
+    }
+    .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+    .plan-card {
+        padding: 1.25rem;
+    }
+    .plan-list li {
+        font-size: 1.1rem;
+    }
+}
+
+/* Desktop (769px+) */
+@media (min-width: 769px) {
+    .plans-section {
+        padding: 3rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .plans-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    .plan-card {
+        padding: 2rem;
+    }
+    .plan-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .plans-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 .edit-note {
   position: absolute;
