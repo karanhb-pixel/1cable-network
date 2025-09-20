@@ -6,7 +6,6 @@ import { useUser } from "../utils/useUser";
 function Home() {
   const { user } = useUser() || {};
 
-  
   return (
     <>
       <main>
@@ -17,24 +16,38 @@ function Home() {
               FAST BROADBAND <br className="hidden-md" /> ANYWHERE YOU WANT IT
             </h1>
             <p className="hero-sub">Urban | Rural | Business</p>
-            </div>
-            {/* <!-- Placeholder for the person image --> */}
-            <div className="hero-img-container">
+          </div>
+          {/* <!-- Placeholder for the person image --> */}
+          <div className="hero-img-container">
+            <picture>
+              {/* <!-- Modern image format for newer browsers --> */}
+              <source
+                srcSet="images/image-small.webp 480w, images/image-large.webp 900w"
+                sizes="(max-width: 600px) 100vw, 900px"
+                type="image/webp"
+              />
+
+              {/* <!-- Fallback for older browsers --> */}
               <img
-                src="https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?_gl=1*1qyg67n*_ga*ODMxNDgzNTg4LjE3NTYwNDM4Nzc.*_ga_8JE65Q40S6*czE3NTYwNDM4NzYkbzEkZzEkdDE3NTYwNDM5NTgkajYwJGwwJGgw"
+                src="images/image-large.jpeg"
+                srcSet="image-small.jpeg 480w, image-large.jpeg 900w"
+                sizes="(max-width: 600px) 100vw, 900px"
                 alt="Customer using internet, smiling woman with laptop"
                 className="hero-img"
                 loading="lazy"
                 decoding="async"
+                width="900"
+                height="600"
               />
+            </picture>
           </div>
         </div>
 
         {/* <!-- Wifi Plans Section --> */}
         <Show_Wifi_plans_2 user={user} />
 
-         {/* <!-- OTT Services Section -->  */}
-        <Ott_plan user={user}/>
+        {/* <!-- OTT Services Section -->  */}
+        <Ott_plan user={user} />
 
         {/* <!-- Additional Services Section --> */}
         <section id="additional-services" className="plans-section">

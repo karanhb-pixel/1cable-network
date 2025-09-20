@@ -39,7 +39,7 @@ function Navbar() {
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <img
-              src="/images/logo-1.png"
+              src="/images/logo-1.avif"
               alt="1cable Network Logo"
               className="logo-img"
               loading="lazy"
