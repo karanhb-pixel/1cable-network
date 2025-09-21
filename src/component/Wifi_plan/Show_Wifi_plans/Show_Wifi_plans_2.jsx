@@ -7,7 +7,7 @@ import LoadingIcon from "../../Loading_icon";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWifiPlans, selectWifiPlans, selectPlansLoading } from "../../../store/plansSlice";
 
-export const Show_Wifi_plans_2 = () => {
+const Show_Wifi_plans_2 = () => {
   const  user  = useUser() ;
   const [isAdmin, setIsAdmin] = useState(false); // Set to true for demonstration
   const [isEditing, setIsEditing] = useState(false);
@@ -49,17 +49,17 @@ export const Show_Wifi_plans_2 = () => {
 
   // Handle admin plan click
   const handleAdminPlanClick = (plan) => {
-    console.log(`Admin clicked to edit plan with speed: ${plan.speed} Mbps`);
+    // console.log(`Admin clicked to edit plan with speed: ${plan.speed} Mbps`);
     setIsEditing(true);
     setEditingPlan(plan);
   };
 
   // Handle saving edited plan (mock implementation)
   const handleSavePlan = async (updatedPlan) => {
-    console.log("Saving updated plan:", updatedPlan);
+    // console.log("Saving updated plan:", updatedPlan);
 
     const planToSave = revertFormattedData([updatedPlan]);
-    console.log("Plan to save to server:", planToSave);
+    // console.log("Plan to save to server:", planToSave);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_ROOT}/wifi-plans`, {
         method: "PUT",
@@ -74,7 +74,7 @@ export const Show_Wifi_plans_2 = () => {
         throw new Error("Failed to save data on the server.");
       }
       const result = await res.json();
-      console.log("Update result:", result);
+      alert("Update result:", result);
       dispatch(fetchWifiPlans());
     } catch (error) {
       console.error("Error saving Plan:", error);
@@ -161,3 +161,5 @@ function revertFormattedData(formattedData) {
     };
   });
 }
+
+export default Show_Wifi_plans_2;

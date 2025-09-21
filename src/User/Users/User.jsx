@@ -118,7 +118,6 @@ const User = () => {
 
   useEffect(() => {
     if (user) {
-      // console.log("user in Users: ",user);
       
       dispatch(fetchUsers());
     }

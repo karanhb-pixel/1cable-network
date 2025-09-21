@@ -10,7 +10,7 @@ import {
   deleteUser,
 } from "../../store/usersSlice";
 
-export const Delete_User = () => {
+ const Delete_User = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -68,3 +68,5 @@ export const Delete_User = () => {
     </div>
   );
 };
+
+export default Delete_User;

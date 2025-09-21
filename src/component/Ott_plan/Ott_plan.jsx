@@ -5,7 +5,8 @@ import { useUser } from "../../utils/useUser";
 import LoadingIcon from "../Loading_icon";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOttPlans, selectOttPlans, selectPlansLoading } from "../../store/plansSlice";
-export const Ott_plan = () => {
+
+const Ott_plan = () => {
   {
     /* <!-- OTT Services Section --> */
   }
@@ -138,3 +139,5 @@ function formatOttPlans_2(data) {
       bonus: plan.bonus || null,
     }));
   }
+
+  export default Ott_plan;

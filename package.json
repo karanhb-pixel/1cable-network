@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "homepage": "http://1cable-network.infy.uk",
-
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
@@ -30,6 +30,8 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "vite-bundle-analyzer": "^1.2.3",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
