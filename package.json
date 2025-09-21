@@ -33,5 +33,12 @@
     "vite": "^7.1.2",
     "vite-bundle-analyzer": "^1.2.3",
     "webpack-bundle-analyzer": "^4.10.2"
+  },
+  "overrides": {
+    "eslint-visitor-keys": "4.2.1",
+    "@humanwhocodes/retry": "0.3.1",
+    "@eslint/eslintrc": {
+      "globals": "16.3.0"
+    }
   }
 }
