@@ -1,6 +1,7 @@
 import "./../App.css";
-import { Ott_plan } from "./Ott_plan/Ott_plan";
-import { Show_Wifi_plans_2 } from "./Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2";
+import Ott_plan from "./Ott_plan/Ott_plan";
+import Show_Wifi_plans_2 from "./Wifi_plan/Show_Wifi_plans/Show_Wifi_plans_2";
+import OptimizedImage from "../utils/OptimizedImage";
 import React from "react";
 import { useUser } from "../utils/useUser";
 function Home() {
@@ -17,29 +18,18 @@ function Home() {
             </h1>
             <p className="hero-sub">Urban | Rural | Business</p>
           </div>
-          {/* <!-- Placeholder for the person image --> */}
+          {/* <!-- Optimized hero image --> */}
           <div className="hero-img-container">
-            <picture>
-              {/* <!-- Modern image format for newer browsers --> */}
-              <source
-                srcSet="images/image-small.webp 480w, images/image-large.webp 900w"
-                sizes="(max-width: 600px) 100vw, 900px"
-                type="image/webp"
-              />
-
-              {/* <!-- Fallback for older browsers --> */}
-              <img
-                src="images/image-large.jpeg"
-                srcSet="image-small.jpeg 480w, image-large.jpeg 900w"
-                sizes="(max-width: 600px) 100vw, 900px"
-                alt="Customer using internet, smiling woman with laptop"
-                className="hero-img"
-                loading="lazy"
-                decoding="async"
-                width="900"
-                height="600"
-              />
-            </picture>
+            <OptimizedImage
+              src="images/image-large.jpeg"
+              srcSet="images/image-small.webp 480w, images/image-large.webp 900w"
+              sizes="(max-width: 600px) 100vw, 900px"
+              alt="Customer using internet, smiling woman with laptop"
+              className="hero-img"
+              width="900"
+              height="600"
+              lazy={true}
+            />
           </div>
         </div>
 

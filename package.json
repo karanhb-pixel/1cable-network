@@ -6,10 +6,16 @@
   "homepage": "http://1cable-network.infy.uk",
   "scripts": {
     "start": "vite",
+    "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "build:analyze": "vite build --mode analyze",
     "preview": "vite preview",
-    "test": "vitest"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "type-check": "tsc --noEmit",
+    "optimize-images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
@@ -19,17 +25,24 @@
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.8.2",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "vite-plugin-pwa": "^1.0.3",
     "yup": "^1.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@vite-pwa/assets-generator": "^0.2.6",
     "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.20",
+    "cssnano": "^7.0.6",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "terser": "^5.36.0",
     "vite": "^7.1.2",
     "vite-bundle-analyzer": "^1.2.3",
     "webpack-bundle-analyzer": "^4.10.2"

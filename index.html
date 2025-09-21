@@ -4,12 +4,106 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>1Cable-Network</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1f2937" />
+    <meta name="description" content="Professional WiFi and OTT plan management system for cable network operators" />
+    <meta name="keywords" content="cable network, wifi plans, ott plans, internet service provider, broadband management" />
+    <meta name="author" content="1Cable Network" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="1Cable Network - WiFi & OTT Management" />
+    <meta property="og:description" content="Professional WiFi and OTT plan management system for cable network operators" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://1cable-network.infy.uk" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:site_name" content="1Cable Network" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="1Cable Network - WiFi & OTT Management" />
+    <meta name="twitter:description" content="Professional WiFi and OTT plan management system for cable network operators" />
+    <meta name="twitter:image" content="/twitter-image.png" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="1Cable Network" />
+
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#1f2937" />
+    <meta name="msapplication-TileImage" content="/icon-144x144.png" />
+
+    <!-- Performance and Security -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+
+    <title>1Cable Network - WiFi & OTT Management</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('✅ Service Worker registered successfully:', registration.scope);
+
+              // Check for updates
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                if (newWorker) {
+                  newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                      // New update available
+                      if (confirm('New version available! Click OK to refresh and use the latest version.')) {
+                        newWorker.postMessage({ action: 'skipWaiting' });
+                        window.location.reload();
+                      }
+                    }
+                  });
+                }
+              });
+            })
+            .catch((error) => {
+              console.log('❌ Service Worker registration failed:', error);
+            });
+        });
+      }
+
+      // Performance monitoring
+      if ('performance' in window) {
+        window.addEventListener('load', () => {
+          // Log basic performance metrics
+          setTimeout(() => {
+            const navigation = performance.getEntriesByType('navigation')[0];
+            if (navigation) {
+              console.log('📊 Page Load Performance:');
+              console.log(`  - DOM Content Loaded: ${navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart}ms`);
+              console.log(`  - Load Complete: ${navigation.loadEventEnd - navigation.loadEventStart}ms`);
+              console.log(`  - Total Load Time: ${navigation.loadEventEnd - navigation.navigationStart}ms`);
+            }
+          }, 0);
+        });
+      }
+    </script>
   </body>
 </html>

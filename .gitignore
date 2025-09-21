@@ -24,3 +24,11 @@ dist-ssr
 *.sw?
 .env
 all_endpoints.txt
+
+# Environment variables (keep examples tracked)
+.env.*
+!.env.example
+.env.local
+.env.development
+.env.production
+.env.test

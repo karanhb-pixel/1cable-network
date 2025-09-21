@@ -1,30 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/authSlice";
 import { useUser } from "../../utils/useUser";
 import "./navbar.css";
 
-function Navbar() {
+const Navbar = React.memo(() => {
   const dispatch = useDispatch();
   const user = useUser();
-  const isAdmin = user?.user_role?.includes('administrator') || false;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownTimeout = React.useRef();
 
-  // console.log("user in navbar:", user);
-  // console.log("isAdmin in navbar:", isAdmin);
-  
-  
-  
-  const handleDropdown = (open) => {
+  // Memoize isAdmin calculation to avoid recalculation on every render
+  const isAdmin = useMemo(() => {
+    return user?.user_role?.includes('administrator') || false;
+  }, [user?.user_role]);
+
+  // Memoize the logout handler to prevent unnecessary re-renders
+  const handleLogout = useCallback(() => {
+    dispatch(setUser(null));
+  }, [dispatch]);
+
+  // Memoize the dropdown handler to prevent unnecessary re-renders
+  const handleDropdown = useCallback((open) => {
     if (open) {
       clearTimeout(dropdownTimeout.current);
       setDropdownOpen(true);
     } else {
       dropdownTimeout.current = setTimeout(() => setDropdownOpen(false), 200);
     }
-  };
+  }, []);
+
+  // Memoize the user avatar URL to avoid recalculation
+  const userAvatarUrl = useMemo(() => {
+    if (!user?.user_nicename) return '';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_nicename)}`;
+  }, [user?.user_nicename]);
   
 
   return (
@@ -107,15 +118,13 @@ function Navbar() {
               <div className="nav-user-info">
                 <Link to="/user" className="nav-user-link">
                   <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user.user_nicename
-                    )}`}
+                    src={userAvatarUrl}
                     alt="User"
                     className="nav-user-avatar"
                   />
                   <span className="nav-user-name">{user.user_nicename}</span>
                 </Link>
-                <button onClick={() => dispatch(setUser(null))} className="nav-logout-btn">
+                <button onClick={handleLogout} className="nav-logout-btn">
                   Logout
                 </button>
               </div>
@@ -129,6 +138,8 @@ function Navbar() {
       </header>
     </>
   );
-}
+});
+
+Navbar.displayName = 'Navbar';
 
 export default Navbar;
