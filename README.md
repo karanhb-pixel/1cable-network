@@ -6,7 +6,7 @@
 
 ## Live site
 
-- Homepage: http://1cable-network.infy.uk
+- Homepage:[ http://1cable-network.infy.uk](https://1cable-network.netlify.app/)
 
 ## Tech stack
 
